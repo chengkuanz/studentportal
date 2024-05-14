@@ -6,7 +6,8 @@ import { Button, Form } from 'react-bootstrap'
 //import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
-
+   // const router = useRouter()
+   // const { user, login } = useAuth()
     const [data, setData] = useState({
         email: '',
         password: '',
@@ -15,7 +16,14 @@ const Login = () => {
     const handleLogin = async (e: any) => {
         e.preventDefault()
 
-
+        // console.log(user)
+        // try {
+        //     await login(data.email, data.password)
+        //     router.push('/dashboard')
+        // } catch (err) {
+        //     console.log(err)
+        // }
+        console.log(data)
     }
 
     return (
