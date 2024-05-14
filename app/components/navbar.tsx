@@ -23,10 +23,10 @@ const NavbarComp = () => {
                 {isClient && (
                     <>
                         <Link href="/signup" passHref>
-                            <Nav.Link>Signup</Nav.Link>
+                            <Nav.Link as="a">Signup</Nav.Link>
                         </Link>
                         <Link href="/login" passHref>
-                            <Nav.Link>Login</Nav.Link>
+                            <Nav.Link as="a">Login</Nav.Link>
                         </Link>
                     </>
                 )}
