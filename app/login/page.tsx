@@ -1,11 +1,10 @@
-import { useRouter } from 'next/router'
-
+"use client"; // This is a client component
+import React, { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 
-//
+
 const Login = () => {
-    const router = useRouter()
-   // const { user, login } = useAuth()
+
     const [data, setData] = useState({
         email: '',
         password: '',
@@ -14,13 +13,7 @@ const Login = () => {
     const handleLogin = async (e: any) => {
         e.preventDefault()
 
-        console.log(user)
-        try {
-            await login(data.email, data.password)
-            router.push('/dashboard')
-        } catch (err) {
-            console.log(err)
-        }
+
     }
 
     return (
