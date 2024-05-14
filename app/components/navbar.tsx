@@ -1,3 +1,4 @@
+"use client"; // This is a client component
 import React from 'react'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import Link from 'next/link'
@@ -6,7 +7,7 @@ import { useRouter } from 'next/router'
 
 const NavbarComp = () => {
  // const { user, logout } = useAuth()
-  const router = useRouter()
+  //const router = useRouter()
 
   return (
       <Navbar bg="light" expand="lg">
