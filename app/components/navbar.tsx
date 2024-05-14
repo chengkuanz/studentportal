@@ -2,7 +2,7 @@
 import React from 'react'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import Link from 'next/link'
-
+//legacyBehavior is used to linking a Bootstrap Navbar correctly with nextjs after next v13.x.x
 
 const NavbarComp = () => {
     return (
@@ -28,3 +28,6 @@ const NavbarComp = () => {
 }
 
 export default NavbarComp
+
+// reference:
+//https://nextjs.org/docs/pages/building-your-application/upgrading/codemods#new-link
