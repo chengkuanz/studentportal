@@ -1,11 +1,11 @@
 "use client"; // This is a client component
 import React, { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
-//import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 
 const Signup = () => {
-   // const { user, signup } = useAuth()
-    //console.log(user)
+    const { user, signup } = useAuth()
+    console.log(user)
     const [data, setData] = useState({
         email: '',
         password: '',
@@ -14,11 +14,11 @@ const Signup = () => {
     const handleSignup = async (e: any) => {
         e.preventDefault()
 
-        // try {
-        //     await signup(data.email, data.password)
-        // } catch (err) {
-        //     console.log(err)
-        // }
+        try {
+            await signup(data.email, data.password)
+        } catch (err) {
+            console.log(err)
+        }
 
         console.log(data)
     }
