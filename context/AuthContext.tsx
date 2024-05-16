@@ -1,12 +1,12 @@
 "use client"; // This is a client component
-import { createContext, useContext, useEffect, useState } from 'react'
+import {createContext, useContext, useEffect, useState} from 'react'
 import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
 } from 'firebase/auth'
-import { auth } from '../config/firebase'
+import {auth} from '../config/firebase'
 
 const AuthContext = createContext<any>({})
 
@@ -52,7 +52,7 @@ export const AuthContextProvider = ({
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, signup, logout }}>
+        <AuthContext.Provider value={{user, login, signup, logout}}>
             {loading ? null : children}
         </AuthContext.Provider>
     )
