@@ -2,9 +2,13 @@
 import React from 'react'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import Link from 'next/link'
+import { useAuth } from '../../context/AuthContext'
+import { useRouter } from 'next/navigation'
 //legacyBehavior is used to linking a Bootstrap Navbar correctly with nextjs after next v13.x.x
 
 const NavbarComp = () => {
+    const { user, logout } = useAuth()
+    const router = useRouter()
     return (
         <Navbar bg="light" expand="lg">
             <Container>
@@ -14,12 +18,27 @@ const NavbarComp = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Link href="/signup" passHref legacyBehavior>
-                            <Nav.Link>Signup</Nav.Link>
-                        </Link>
-                        <Link href="/login" passHref legacyBehavior>
-                            <Nav.Link>Login</Nav.Link>
-                        </Link>
+                        {user ? (
+                            <div>
+                                <Nav.Link
+                                    onClick={() => {
+                                        logout()
+                                        router.push('/login')
+                                    }}
+                                >
+                                    Logout
+                                </Nav.Link>
+                            </div>
+                        ) : (
+                            <>
+                                <Link href="/signup" passHref legacyBehavior>
+                                    <Nav.Link>Signup</Nav.Link>
+                                </Link>
+                                <Link href="/login" passHref legacyBehavior>
+                                    <Nav.Link>Login</Nav.Link>
+                                </Link>
+                            </>
+                        )}
                     </Nav>
                 </Navbar.Collapse>
             </Container>
