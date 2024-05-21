@@ -1,6 +1,6 @@
 "use client"; // This is a client component
 import React from 'react'
-import { Container, Nav, Navbar } from 'react-bootstrap'
+import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import Link from 'next/link'
 import { useAuth } from '../../context/AuthContext'
 import { useRouter } from 'next/navigation'
@@ -39,6 +39,12 @@ const NavbarComp = () => {
                                 </Link>
                             </>
                         )}
+                        <NavDropdown title="My Courses" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/course/list">Course List</NavDropdown.Item>
+                            <NavDropdown.Divider />
+                            <NavDropdown.Item href="/course/add">Add Course</NavDropdown.Item>
+                            <NavDropdown.Divider />
+                        </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

@@ -8,6 +8,7 @@ import {AuthContextProvider} from "@/context/AuthContext";
 import ProtectedRoute from "@/app/components/ProtectedRouter";
 import {usePathname} from "next/navigation";
 import {useRouter} from "next/navigation";
+import NavbarComp from "@/app/components/navbar";
 
 
 const noAuthRequired = ["/","/login", "/signup"];
@@ -33,6 +34,7 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body className={inter.className}>
+
         <AuthContextProvider>
             <Navbar />
             {noAuthRequired.includes(pathname) ? (
