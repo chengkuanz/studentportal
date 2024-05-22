@@ -4,6 +4,7 @@ import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import Link from 'next/link'
 import { useAuth } from '../../context/AuthContext'
 import { useRouter } from 'next/navigation'
+import CourseList from "@/app/courses/courseList/page";
 //legacyBehavior is used to linking a Bootstrap Navbar correctly with nextjs after next v13.x.x
 
 const NavbarComp = () => {
@@ -40,11 +41,16 @@ const NavbarComp = () => {
                             </>
                         )}
                         <NavDropdown title="My Courses" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/course/list">Course List</NavDropdown.Item>
+                            <NavDropdown.Item href="/courses/courseList">
+                                Course List
+                            </NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item href="/course/add">Add Course</NavDropdown.Item>
+                            <NavDropdown.Item href="/courses/addCourse">Add Course</NavDropdown.Item>
                             <NavDropdown.Divider />
                         </NavDropdown>
+                    </Nav>
+                    <Nav>
+                        <Nav.Link href="/user">User Info</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
