@@ -47,6 +47,7 @@ export const AuthContextProvider = ({
         const user = userCredential.user;
         await setDoc(doc(db, 'users', user.uid), {
             email: user.email,
+            isAdmin: false,
         });
     };
 
