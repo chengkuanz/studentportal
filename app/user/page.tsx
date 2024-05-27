@@ -4,11 +4,11 @@ import { useAuth } from '../../context/AuthContext';
 
 const User = () => {
     const { user } = useAuth();
-    const [userData, setUserData] = useState({ email: '' });
+    const [userData, setUserData] = useState({ email: '', uid: '' });
 
     useEffect(() => {
         if (user) {
-            setUserData({ email: user.email });
+            setUserData({ email: user.email, uid: user.uid });
         }
     }, [user]);
 
@@ -27,6 +27,7 @@ const User = () => {
         >
             <h1>User Information</h1>
             <p>Email: {userData.email}</p>
+            <p>User ID: {userData.uid}</p>
         </div>
     );
 }
