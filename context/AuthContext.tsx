@@ -42,11 +42,14 @@ export const AuthContextProvider = ({
     // const signup = (email: string, password: string) => {
     //     return createUserWithEmailAndPassword(auth, email, password)
     // }
-    const signup = async (email: string, password: string) => {
+    const signup = async (email: string, password: string, firstName: string, lastName: string, studentNumber: string) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         await setDoc(doc(db, 'users', user.uid), {
             email: user.email,
+            firstName: firstName,
+            lastName: lastName,
+            studentNumber: studentNumber,
             isAdmin: false,
         });
     };
