@@ -47,21 +47,35 @@ const Dashboard = () => {
                 marginTop: '20px'
             }}
         >
+
             <h1>Courses available this semester:</h1>
+
             {courses.length > 0 ? (
-                <ul>
+                <table style={{width: '100%'}}>
+                    <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Course Code</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {courses.map(course => (
-                        <li key={course.id}>
-                            <p>Course Name: {course.name}</p>
-                            <p>Course Code: {course.courseCode}</p>
-                        </li>
+                        <tr key={course.id}>
+                            <td>{course.name}</td>
+                            <td>{course.courseCode}</td>
+                        </tr>
                     ))}
-                </ul>
+                    </tbody>
+                </table>
+
+
             ) : (
                 <p>No courses available</p>
             )}
         </div>
-    );
+
+    )
+        ;
 }
 
 export default Dashboard;
