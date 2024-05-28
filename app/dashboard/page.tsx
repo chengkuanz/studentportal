@@ -8,6 +8,8 @@ interface Course {
     id: string;
     name: string;
     courseCode: string;
+    dayOfWeek: string;
+    time: string;
 }
 
 const Dashboard = () => {
@@ -23,7 +25,9 @@ const Dashboard = () => {
                 return {
                     id: doc.id,
                     name: data.name,
-                    courseCode: data.courseCode
+                    courseCode: data.courseCode,
+                    dayOfWeek: data.dayOfWeek,
+                    time: data.time,
                 };
             });
             setCourses(courseList);
@@ -56,6 +60,8 @@ const Dashboard = () => {
                     <tr>
                         <th>Course Name</th>
                         <th>Course Code</th>
+                        <th>Day of Week</th>
+                        <th>Time</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -63,6 +69,8 @@ const Dashboard = () => {
                         <tr key={course.id}>
                             <td>{course.name}</td>
                             <td>{course.courseCode}</td>
+                            <td>{course.dayOfWeek}</td>
+                            <td>{course.time}</td>
                         </tr>
                     ))}
                     </tbody>
