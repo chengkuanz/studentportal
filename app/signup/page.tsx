@@ -9,13 +9,16 @@ const Signup = () => {
     const [data, setData] = useState({
         email: '',
         password: '',
+        firstName: '',
+        lastName: '',
+        studentNumber: '',
     })
 
     const handleSignup = async (e: any) => {
         e.preventDefault()
 
         try {
-            await signup(data.email, data.password)
+            await signup(data.email, data.password, data.firstName, data.lastName, data.studentNumber)
         } catch (err) {
             console.log(err)
         }
@@ -63,6 +66,55 @@ const Signup = () => {
                         value={data.password}
                     />
                 </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formBasicFirstName">
+                    <Form.Label>First Name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Enter first name"
+                        required
+                        onChange={(e: any) =>
+                            setData({
+                                ...data,
+                                firstName: e.target.value,
+                            })
+                        }
+                        value={data.firstName}
+                    />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formBasicLastName">
+                    <Form.Label>Last Name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Enter last name"
+                        required
+                        onChange={(e: any) =>
+                            setData({
+                                ...data,
+                                lastName: e.target.value,
+                            })
+                        }
+                        value={data.lastName}
+                    />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formBasicStudentNumber">
+                    <Form.Label>Student Number</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Enter student number"
+                        required
+                        onChange={(e: any) =>
+                            setData({
+                                ...data,
+                                studentNumber: e.target.value,
+                            })
+                        }
+                        value={data.studentNumber}
+                    />
+                </Form.Group>
+
 
                 <Button variant="primary" type="submit">
                     Signup
