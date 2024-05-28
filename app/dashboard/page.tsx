@@ -1,46 +1,89 @@
 'use client'; // This is a client component
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, DocumentData } from 'firebase/firestore';
 import { db } from '../../config/firebase';
+import { useAuth } from '../../context/AuthContext';
 
-// Define a type for your user data
-type UserData = {
+interface Course {
     id: string;
-    // Add other fields as necessary
-};
-
-async function fetchData(): Promise<UserData[]> {
-    const querySnapshot = await getDocs(collection(db, 'users'));
-    const data: UserData[] = [];
-    querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() } as UserData);
-    });
-    return data;
+    name: string;
+    courseCode: string;
+    dayOfWeek: string;
+    time: string;
 }
 
-function Dashboard() {
-    const [data, setData] = useState<UserData[]>([]);
+const Dashboard = () => {
+    const { user } = useAuth();
+    const [courses, setCourses] = useState<Course[]>([]);
 
     useEffect(() => {
-        fetchData().then((data) => {
-            setData(data);
-        });
-    }, []);
+        const fetchCourses = async () => {
+            const coursesCollection = collection(db, 'courses');
+            const courseSnapshot = await getDocs(coursesCollection);
+            const courseList = courseSnapshot.docs.map((doc) => {
+                const data = doc.data() as DocumentData;
+                return {
+                    id: doc.id,
+                    name: data.name,
+                    courseCode: data.courseCode,
+                    dayOfWeek: data.dayOfWeek,
+                    time: data.time,
+                };
+            });
+            setCourses(courseList);
+        };
+
+        if (user) {
+            fetchCourses();
+        }
+    }, [user]);
+
+    if (!user) {
+        return <div>Loading...</div>;
+    }
 
     return (
-        <div>
-            <h1>Dashboard</h1>
-            <h2>Users ID list</h2>
+        <div
+            style={{
+                width: '40%',
+                margin: 'auto',
+                textAlign: 'left',
+                marginTop: '20px'
+            }}
+        >
 
-            {/* Render your data here */}
-            {data.map((user) => (
-                <div key={user.id}>
-                    <p>ID: {user.id}</p>
-                    {/* Render other fields as necessary */}
-                </div>
-            ))}
+            <h1>Courses available this semester:</h1>
+
+            {courses.length > 0 ? (
+                <table style={{width: '100%'}}>
+                    <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Course Code</th>
+                        <th>Day of Week</th>
+                        <th>Time</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {courses.map(course => (
+                        <tr key={course.id}>
+                            <td>{course.name}</td>
+                            <td>{course.courseCode}</td>
+                            <td>{course.dayOfWeek}</td>
+                            <td>{course.time}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+
+
+            ) : (
+                <p>No courses available</p>
+            )}
         </div>
-    );
+
+    )
+        ;
 }
 
 export default Dashboard;
