@@ -13,7 +13,7 @@ const NavbarComp = () => {
     return (
         <Navbar bg="light" expand="lg">
             <Container>
-                <Link href="/" passHref legacyBehavior>
+                <Link href="/dashboard" passHref legacyBehavior>
                     <Navbar.Brand>Language Learning Student Portal</Navbar.Brand>
                 </Link>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
