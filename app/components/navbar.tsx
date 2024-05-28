@@ -50,6 +50,8 @@ const NavbarComp = () => {
                             <NavDropdown.Divider />
                             <NavDropdown.Item href="/courses/addCourse">Add Course</NavDropdown.Item>
                             <NavDropdown.Divider />
+                            <NavDropdown.Item href="/courses/postComment">post comment</NavDropdown.Item>
+                            <NavDropdown.Divider />
                         </NavDropdown>
                     </Nav>
                     <Nav>
