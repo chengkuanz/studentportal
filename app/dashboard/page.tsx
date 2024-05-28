@@ -49,22 +49,14 @@ const Dashboard = () => {
         >
             <h1>Courses available this semester:</h1>
             {courses.length > 0 ? (
-                <table style={{width: '100%', borderCollapse: 'collapse'}}>
-                    <thead>
-                    <tr>
-                        <th style={{border: '1px solid black', padding: '8px'}}>Course Name</th>
-                        <th style={{border: '1px solid black', padding: '8px'}}>Course Code</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                <ul>
                     {courses.map(course => (
-                        <tr key={course.id}>
-                            <td style={{border: '1px solid black', padding: '8px'}}>{course.name}</td>
-                            <td style={{border: '1px solid black', padding: '8px'}}>{course.courseCode}</td>
-                        </tr>
+                        <li key={course.id}>
+                            <p>Course Name: {course.name}</p>
+                            <p>Course Code: {course.courseCode}</p>
+                        </li>
                     ))}
-                    </tbody>
-                </table>
+                </ul>
             ) : (
                 <p>No courses available</p>
             )}
