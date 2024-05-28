@@ -1,44 +1,65 @@
 'use client'; // This is a client component
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, DocumentData } from 'firebase/firestore';
 import { db } from '../../config/firebase';
+import { useAuth } from '../../context/AuthContext';
 
-// Define a type for your user data
-type UserData = {
+interface Course {
     id: string;
-    // Add other fields as necessary
-};
-
-async function fetchData(): Promise<UserData[]> {
-    const querySnapshot = await getDocs(collection(db, 'users'));
-    const data: UserData[] = [];
-    querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() } as UserData);
-    });
-    return data;
+    name: string;
+    courseCode: string;
 }
 
-function Dashboard() {
-    const [data, setData] = useState<UserData[]>([]);
+const Dashboard = () => {
+    const { user } = useAuth();
+    const [courses, setCourses] = useState<Course[]>([]);
 
     useEffect(() => {
-        fetchData().then((data) => {
-            setData(data);
-        });
-    }, []);
+        const fetchCourses = async () => {
+            const coursesCollection = collection(db, 'courses');
+            const courseSnapshot = await getDocs(coursesCollection);
+            const courseList = courseSnapshot.docs.map((doc) => {
+                const data = doc.data() as DocumentData;
+                return {
+                    id: doc.id,
+                    name: data.name,
+                    courseCode: data.courseCode
+                };
+            });
+            setCourses(courseList);
+        };
+
+        if (user) {
+            fetchCourses();
+        }
+    }, [user]);
+
+    if (!user) {
+        return <div>Loading...</div>;
+    }
 
     return (
-        <div>
-            <h1>Dashboard</h1>
-            <h2>Users ID list</h2>
-
-            {/* Render your data here */}
-            {data.map((user) => (
-                <div key={user.id}>
-                    <p>ID: {user.id}</p>
-                    {/* Render other fields as necessary */}
-                </div>
-            ))}
+        <div
+            style={{
+                width: '40%',
+                margin: 'auto',
+                textAlign: 'left',
+                marginTop: '20px'
+            }}
+        >
+            <h1>Courses available this semester:</h1>
+            {courses.length > 0 ? (
+                <ul>
+                    {courses.map(course => (
+                        <li key={course.id}>
+                            <p>Course Name: {course.name}</p>
+                            <p>Course Code: {course.courseCode}</p>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No courses available</p>
+            )}
         </div>
     );
 }
