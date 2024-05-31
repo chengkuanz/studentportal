@@ -1,11 +1,9 @@
 'use client'; // This is a client component
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { doc, getDoc, DocumentData } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from "@/context/AuthContext";
-
-//Notes: the name parent director must be the as same as the const which get from useParams
 
 interface Course {
     id: string;
@@ -15,10 +13,23 @@ interface Course {
     time: string;
 }
 
+interface CourseContent {
+    id: string;
+    title: string;
+    textContent: string;
+    open: string;
+    close: string;
+    due: string;
+    type: string;
+    contentOrder: number;
+    courseDocId: string;
+}
+
 const CourseDetails = () => {
     const { user } = useAuth();
     const { courseId } = useParams();
     const [course, setCourse] = useState<Course | null>(null);
+    const [courseContents, setCourseContents] = useState<CourseContent[]>([]);
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -38,8 +49,33 @@ const CourseDetails = () => {
             }
         };
 
+        const fetchCourseContents = async () => {
+            if (courseId) {
+                const courseContentCollection = collection(db, 'courseContent');
+                const q = query(courseContentCollection, where('courseDocId', '==', courseId));
+                const querySnapshot = await getDocs(q);
+                const contents: CourseContent[] = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data() as DocumentData;
+                    contents.push({
+                        id: doc.id,
+                        title: data.title,
+                        textContent: data.textContent,
+                        open: data.open,
+                        close: data.close,
+                        due: data.due,
+                        type: data.type,
+                        contentOrder: data.contentOrder,
+                        courseDocId: data.courseDocId,
+                    });
+                });
+                setCourseContents(contents);
+            }
+        };
+
         if (user && courseId) {
             fetchCourse();
+            fetchCourseContents();
         }
     }, [user, courseId]);
 
@@ -75,6 +111,19 @@ const CourseDetails = () => {
                 </tr>
                 </tbody>
             </table>
+            <div>
+                <h2>Course Contents</h2>
+                {courseContents.map((content) => (
+                    <div key={content.id} style={{ marginTop: '10px' }}>
+                        <h3>{content.title}</h3>
+                        <div dangerouslySetInnerHTML={{ __html: content.textContent }} />
+                        <p>Open: {content.open}</p>
+                        <p>Close: {content.close}</p>
+                        <p>Due: {content.due}</p>
+                        <p>Type: {content.type}</p>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
