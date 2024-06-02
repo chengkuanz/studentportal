@@ -170,6 +170,13 @@ export default function AddCourse() {
         activeCourse: true,
     });
 
+    const [post, setPost] = useState({
+         title : "",
+        author : "",
+        comment : "",
+        date : "",
+    });
+
 
     //console.log(courses)
 
@@ -211,64 +218,30 @@ export default function AddCourse() {
         <div className="w-full  text-xs sm:text-sm mx-auto flex flex-col flex-1 gap-3 sm:gap-5">
             <div className="flex items-center">
 
-                <div className="w-full"><h2 className="mb-8 text-3xl text-center">Add New Course</h2>
+                <div className="w-full"><h2 className="mb-8 text-3xl text-center">Add New Comment</h2>
 
                     <form className="form-lg">
                         <table>
-                            <ReadCourse name="Course Name" id="courseName" placeholder="Course Name" value={course.name}
-                                        lambda={(e) => setCourse({...course, name: e.target.value})}/>
-                            <ReadCourse name="Course Code" id="courseCode" placeholder="e.g. ITAL1000"
-                                        value={course.courseCode} lambda={(e) => setCourse({
-                                ...course,
-                                courseCode: e.target.value.replace(/\s/g, '')
+                            <ReadCourse name="Title" id="title" placeholder="Post Title" value={post.title}
+                                        lambda={(e) => setPost({...post, title: e.target.value})}/>
+                            <ReadCourse name="Author" id="author" placeholder="Author"
+                                        value={post.author} lambda={(e) => setPost({
+                                ...post,
+                                author: e.target.value.replace(/\s/g, '')
                             })}/>
-                            <ReadCourse name="Course Section" id="courseSection" placeholder="e.g. A"
-                                        value={course.section} lambda={(e) => setCourse({
-                                ...course,
-                                section: e.target.value.replace(/\s/g, '')
-                            })}/>
-
-                            <ReadCourse name="Location" id="location"
-                                        placeholder="(optional, leave blank if class is virtual)"
-                                        value={course.location}
-                                        lambda={(e) => setCourse({...course, location: e.target.value})}/>
-
-                            <ReadCourse name="Year" id="year" placeholder="e.g. 2025"
-                                        value={course.year} lambda={(e) => setCourse({
-                                ...course,
-                                year: e.target.value.replace(/\s/g, '')
+                            <ReadTime name="Date" id="date" value={post.date} lambda={(e) => setPost({
+                                ...post,
+                                date: e.target.value.replace(/\s/g, '')
                             })}/>
 
-                            <ReadCheck name="Is this class virtual?" id="virtualClass"
-                                       value={course.isVirtual}
-                                       lambda={(e) => setCourse({...course, isVirtual: e.target.checked})}/>
 
-                            <ReadCheck name="Is this class actively running?" id="activeClass"
-                                       value={course.activeCourse}
-                                       lambda={(e) => setCourse({...course, activeCourse: e.target.checked})}/>
-
-                            <ReadList name="Semester" id="semester" list={["", "Winter", "Spring", "Summer", "Fall"]}
-                                      value={course.semester}
-                                      lambda={(e) => setCourse({...course, semester: e.target.value})}/>
-
-                            <ReadList name="Day" id="day"
-                                      list={["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]}
-                                      value={course.dayOfWeek}
-                                      lambda={(e) => setCourse({...course, dayOfWeek: e.target.value})}/>
-
-                            <ReadTime name="Time" id="time"
-                                      value={course.time} lambda={(e) => setCourse({...course, time: e.target.value})}/>
-
-                            <UploadFile name="Banner Picture Upload" id="file" lambda={(e) => {
-                                setBannerUpload(e.target.files[0]);
-                            }} upload={bannerUpload}/>
 
 
                         </table>
 
-                        <ReadText name="Course Description" id="courseDescription" placeholder="Course Description"
-                                  value={course.description} lambda={(e) =>
-                            setCourse({...course, description: e.target.value})}/>
+                        <ReadText name="Comment" id="comment" placeholder="Comment"
+                                  value={post.comment} lambda={(e) =>
+                            setPost({...post, comment: e.target.value})}/>
 
 
 
