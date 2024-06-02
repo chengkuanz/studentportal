@@ -11,10 +11,13 @@ const NavbarComp = () => {
     const { user, logout } = useAuth()
     const router = useRouter()
     return (
-        <Navbar bg="light" expand="lg">
+        <Navbar bg="dark" expand="lg">
             <Container>
                 <Link href="/dashboard" passHref legacyBehavior>
-                    <Navbar.Brand>Language Learning Student Portal</Navbar.Brand>
+                    <Navbar.Brand>< span className="italian-green"> Italian</span>
+                        < span className="italian-white"> Student</span>
+                        < span className="italian-red"> Portal</span>
+                       </Navbar.Brand>
                 </Link>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">

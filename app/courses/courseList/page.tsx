@@ -62,7 +62,7 @@ const Dashboard = () => {
     return (
         <div
             style={{
-                width: '40%',
+                width: '70%',
                 margin: 'auto',
                 textAlign: 'left',
                 marginTop: '20px'
@@ -74,7 +74,7 @@ const Dashboard = () => {
                 <table style={{ width: '100%' }}>
                     <thead>
                     <tr>
-                        <th>Course Name</th>
+                        <th>Course Name 1</th>
                         <th>Course Code</th>
                         <th>Day of Week</th>
                         <th>Time</th>
