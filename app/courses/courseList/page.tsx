@@ -62,7 +62,7 @@ const Dashboard = () => {
     return (
         <div
             style={{
-                width: '70%',
+                width: '90%',
                 margin: 'auto',
                 textAlign: 'left',
                 marginTop: '20px'

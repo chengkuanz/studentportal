@@ -15,7 +15,7 @@ export default function Sidebar() {
             className=" z-40 h-screen transition-transform -translate-x-full sm:translate-x-0"
             aria-label="Sidebar"
         >
-            <div className="sidebar-items h-full px-3 py-4 overflow-y-auto ">
+            <div className="sidebar-items h-full py-4 overflow-y-auto ">
 
                 <ul className="space-y-2 font-medium">
                     <div>
@@ -33,7 +33,7 @@ export default function Sidebar() {
                     <div>
                         {" "}
                         <li className="inline-block cursor-pointer inline-flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <Link href="/courses">
+                            <Link href="/courses/courseList">
                                 <div className="inline-flex">
                                     {" "}
                                     <FcNews className="sidebar-icon" />
@@ -52,7 +52,7 @@ export default function Sidebar() {
                                 <div className="inline-flex">
                                     <FcConferenceCall className="sidebar-icon" />
                                     <span className="inline-flex-1 ml-3 whitespace-nowrap">
-                    Manage Users
+                    Discussion
                   </span>
                                 </div>
                             </Link>
@@ -77,7 +77,7 @@ export default function Sidebar() {
                                 <div className="inline-flex">
                                     <FcTodoList className="sidebar-icon" />
                                     <span className="inline-flex-1 ml-3 whitespace-nowrap">
-                    Registration Requests
+                    Resources
                   </span>
                                 </div>
                             </Link>

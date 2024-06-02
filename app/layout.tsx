@@ -9,6 +9,7 @@ import ProtectedRoute from "@/app/components/ProtectedRouter";
 import {usePathname} from "next/navigation";
 import {useRouter} from "next/navigation";
 import NavbarComp from "@/app/components/navbar";
+import Sidebar from "@/app/components/sidebar";
 
 
 const noAuthRequired = ["/","/login", "/signup"];
@@ -36,16 +37,26 @@ export default function RootLayout({
         <body className="dark">
 
         <AuthContextProvider>
-            <Navbar />
-            {noAuthRequired.includes(pathname) ? (
-                children
-            ) : (
-                <ProtectedRoute>
-                    {children}
-                </ProtectedRoute>
-            )}
+            <div className='flex flex-col min-h-screen relative bg-neutral-800 text-white'>
+                <Navbar/>
+                <div className='sidebar-and-main'>
+                    <Sidebar/>
+                    <main className='flex-1 flex flex-col p-4 inline-block max-w-[82vw] ml-auto'>
+
+
+                        {noAuthRequired.includes(pathname) ? (
+                            children
+                        ) : (
+                            <ProtectedRoute>
+                                {children}
+                            </ProtectedRoute>
+                        )}
+                    </main>
+                </div>
+            </div>
         </AuthContextProvider>
         </body>
+
         </html>
-    );
+);
 }
