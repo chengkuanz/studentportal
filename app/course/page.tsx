@@ -61,44 +61,46 @@ const Dashboard = () => {
 
     return (
         <div
-            style={{
-                width: '40%',
-                margin: 'auto',
-                textAlign: 'left',
-                marginTop: '20px'
-            }}
-        >
-            <h1>Your Registered Courses:</h1>
+    style={{
+        width: '100%',
+        maxWidth: '600px',
+        margin: 'auto',
+        textAlign: 'left',
+        marginTop: '20px',
+        padding: '0 10px'
+    }}
+>
+    <h1>Your Registered Courses:</h1>
 
-            {courses.length > 0 ? (
-                <table style={{ width: '100%' }}>
-                    <thead>
-                    <tr>
-                        <th>Course Name</th>
-                        <th>Course Code</th>
-                        <th>Day of Week</th>
-                        <th>Time</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {courses.map(course => (
-                        <tr key={course.id}>
-                            <td>
-                                <Link href={`/course/${course.id}`}>
-                                    {course.name}
-                                </Link>
-                            </td>
-                            <td>{course.courseCode}</td>
-                            <td>{course.dayOfWeek}</td>
-                            <td>{course.time}</td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            ) : (
-                <p>No courses registered</p>
-            )}
-        </div>
+    {courses.length > 0 ? (
+        <table style={{ width: '100%' }}>
+            <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Course Code</th>
+                <th>Day of Week</th>
+                <th>Time</th>
+            </tr>
+            </thead>
+            <tbody>
+            {courses.map(course => (
+                <tr key={course.id}>
+                    <td>
+                        <Link href={`/course/${course.id}`}>
+                            {course.name}
+                        </Link>
+                    </td>
+                    <td>{course.courseCode}</td>
+                    <td>{course.dayOfWeek}</td>
+                    <td>{course.time}</td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
+    ) : (
+        <p>No courses registered</p>
+    )}
+</div>
     );
 }
 
