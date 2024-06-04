@@ -11,6 +11,8 @@ const WelcomeCarousel = () =>{
                     <Image
                         src='/images/welcome1.jpg'
                         alt="First slide"
+                        width={1500}
+                        height={800}
                         fluid
                     />
                     <Carousel.Caption>
@@ -22,6 +24,8 @@ const WelcomeCarousel = () =>{
                     <Image
                         src='/images/welcome2.jpg'
                         alt="Second slide"
+                        width={1500}
+                        height={800}
                         fluid
                     />
                     <Carousel.Caption>
@@ -33,8 +37,9 @@ const WelcomeCarousel = () =>{
                     <Image
                         src='/images/welcome3.jpg'
                         alt="Third slide"
+                        width={1500}
+                        height={800}
                         fluid
-
                     />
                     <Carousel.Caption>
                         <h5>Third slide label</h5>
