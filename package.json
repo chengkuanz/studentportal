@@ -9,13 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "-": "^0.0.1",
     "bootstrap": "^5.3.3",
+    "file-loader": "^6.2.0",
     "firebase": "^10.12.0",
     "next": "14.2.3",
     "react": "^18",
-    "react-router": "^6.23.1",
     "react-bootstrap": "^2.10.2",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-router": "^6.23.1",
+    "save-dev": "^0.0.1-security",
+    "url-loader": "^4.1.1"
   },
   "devDependencies": {
     "@types/node": "^20",
