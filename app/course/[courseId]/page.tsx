@@ -23,6 +23,7 @@ interface CourseContent {
     type: string;
     contentOrder: number;
     courseDocId: string;
+    videoUrl: string;
 }
 
 const CourseDetails = () => {
@@ -57,17 +58,34 @@ const CourseDetails = () => {
                 const contents: CourseContent[] = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data() as DocumentData;
-                    contents.push({
-                        id: doc.id,
-                        title: data.title,
-                        textContent: data.textContent,
-                        open: data.open,
-                        close: data.close,
-                        due: data.due,
-                        type: data.type,
-                        contentOrder: data.contentOrder,
-                        courseDocId: data.courseDocId,
-                    });
+                    if (data.type === 'video') {
+                        contents.push({
+                            id: doc.id,
+                            title: data.title,
+                            textContent: data.textContent,
+                            open: data.open,
+                            close: data.close,
+                            due: data.due,
+                            type: data.type,
+                            contentOrder: data.contentOrder,
+                            courseDocId: data.courseDocId,
+                            videoUrl: data.videoUrl,
+                        });
+                    }
+                    if (data.type === 'text') {
+                        contents.push({
+                            id: doc.id,
+                            title: data.title,
+                            textContent: data.textContent,
+                            open: data.open,
+                            close: data.close,
+                            due: data.due,
+                            type: data.type,
+                            contentOrder: data.contentOrder,
+                            courseDocId: data.courseDocId,
+                            videoUrl: '',
+                        });
+                    }
                 });
                 setCourseContents(contents);
             }
@@ -114,13 +132,32 @@ const CourseDetails = () => {
             <div>
                 <h2>Course Contents</h2>
                 {courseContents.map((content) => (
-                    <div key={content.id} style={{ marginTop: '10px' }}>
-                        <h3>{content.title}</h3>
-                        <div dangerouslySetInnerHTML={{ __html: content.textContent }} />
-                        <p>Open: {content.open}</p>
-                        <p>Close: {content.close}</p>
-                        <p>Due: {content.due}</p>
-                        <p>Type: {content.type}</p>
+                    <div key={content.id}
+                         style={{marginTop: '20px', border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
+                        <h3 style={{marginBottom: '10px'}}>{content.title}</h3>
+                        <p><strong>Type:</strong> {content.type}</p>
+                        <div dangerouslySetInnerHTML={{__html: content.textContent}}/>
+                        <p><strong>Open:</strong> {content.open}</p>
+                        <p><strong>Close:</strong> {content.close}</p>
+                        <p><strong>Due:</strong> {content.due}</p>
+
+                        {content.type === 'video' && (
+                            <div style={{marginTop: '10px'}}>
+                                <video width="320" height="240" controls>
+                                    <source src={content.videoUrl} type="video/mp4"/>
+                                    Your browser does not support the video tag.
+                                </video>
+                                <a href={content.videoUrl} download style={{
+                                    display: 'inline-block',
+                                    marginTop: '10px',
+                                    padding: '10px 15px',
+                                    backgroundColor: '#007BFF',
+                                    color: '#fff',
+                                    borderRadius: '5px',
+                                    textDecoration: 'none'
+                                }}>Download Video</a>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
