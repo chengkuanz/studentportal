@@ -9,6 +9,7 @@ import ProtectedRoute from "@/app/components/ProtectedRouter";
 import {usePathname} from "next/navigation";
 import {useRouter} from "next/navigation";
 import NavbarComp from "@/app/components/navbar";
+import WelcomeCarousel from "@/app/components/welcome";
 
 
 const noAuthRequired = ["/","/login", "/signup"];
@@ -37,6 +38,9 @@ export default function RootLayout({
 
         <AuthContextProvider>
             <Navbar />
+            <WelcomeCarousel>
+
+            </WelcomeCarousel>
             {noAuthRequired.includes(pathname) ? (
                 children
             ) : (
@@ -44,6 +48,7 @@ export default function RootLayout({
                     {children}
                 </ProtectedRoute>
             )}
+
         </AuthContextProvider>
         </body>
         </html>
