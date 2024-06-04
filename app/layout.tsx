@@ -10,6 +10,8 @@ import {usePathname} from "next/navigation";
 import {useRouter} from "next/navigation";
 import NavbarComp from "@/app/components/navbar";
 import WelcomeCarousel from "@/app/components/welcome";
+import Image from "react-bootstrap/Image";
+import React from "react";
 
 
 const noAuthRequired = ["/","/login", "/signup"];
@@ -35,7 +37,6 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body className={inter.className}>
-
         <AuthContextProvider>
             <Navbar />
             <WelcomeCarousel>
