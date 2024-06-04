@@ -39,9 +39,6 @@ export default function RootLayout({
         <body className={inter.className}>
         <AuthContextProvider>
             <Navbar />
-            <WelcomeCarousel>
-
-            </WelcomeCarousel>
             {noAuthRequired.includes(pathname) ? (
                 children
             ) : (
