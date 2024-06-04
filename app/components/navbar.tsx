@@ -43,6 +43,9 @@ const NavbarComp = () => {
                         <Link href="/login" passHref legacyBehavior>
                             <Nav.Link>Login-SampleTab</Nav.Link>
                         </Link>
+                        <Link href="/course" passHref legacyBehavior>
+                            <Nav.Link>Course</Nav.Link>
+                        </Link>
                         <NavDropdown title="My Courses" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/courses/courseList">
                                 Course List
