@@ -29,7 +29,8 @@ const QuizComponent = () => {
     const { user } = useAuth();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [courses, setCourses] = useState<{ [key: string]: Course }>({});
-    const [index, setIndex] = useState(0);
+    const [quizIndex, setQuizIndex] = useState(0);
+    const [questionIndex, setQuestionIndex] = useState(0);
     const [lock, setLock] = useState(false);
     const [score, setScore] = useState(0);
     const [result, setResult] = useState(false);
@@ -109,21 +110,33 @@ const QuizComponent = () => {
 
     const next = () => {
         if (lock === true) {
-            if (index === quizzes[0].questions.length - 1) {
-                setResult(true);
-                return;
+            const currentQuiz = quizzes[quizIndex];
+            if (questionIndex === currentQuiz.questions.length - 1) {
+                if (quizIndex === quizzes.length - 1) {
+                    setResult(true);
+                } else {
+                    setQuizIndex((prevIndex) => prevIndex + 1);
+                    setQuestionIndex(0);
+                    resetOptions();
+                }
+            } else {
+                setQuestionIndex((prevIndex) => prevIndex + 1);
+                resetOptions();
             }
-            setIndex((prevIndex) => prevIndex + 1);
-            setLock(false);
-            OptionArray.forEach((option) => {
-                option.current!.classList.remove("wrong");
-                option.current!.classList.remove("correct");
-            });
         }
     };
 
+    const resetOptions = () => {
+        setLock(false);
+        OptionArray.forEach((option) => {
+            option.current!.classList.remove("wrong");
+            option.current!.classList.remove("correct");
+        });
+    };
+
     const reset = () => {
-        setIndex(0);
+        setQuizIndex(0);
+        setQuestionIndex(0);
         setScore(0);
         setLock(false);
         setResult(false);
@@ -133,8 +146,8 @@ const QuizComponent = () => {
         return <div className="text-center mt-5">Loading...</div>;
     }
 
-    const currentQuiz = quizzes.length > 0 ? quizzes[0] : null;
-    const currentQuestion = currentQuiz ? currentQuiz.questions[index] : null;
+    const currentQuiz = quizzes.length > 0 ? quizzes[quizIndex] : null;
+    const currentQuestion = currentQuiz ? currentQuiz.questions[questionIndex] : null;
     const course = currentQuiz ? courses[currentQuiz.courseId] : null;
 
     return (
@@ -145,7 +158,7 @@ const QuizComponent = () => {
                     <hr />
                     {!result ? (
                         <>
-                            <h2>{index + 1}. {currentQuestion.question}</h2>
+                            <h2>{questionIndex + 1}. {currentQuestion.question}</h2>
                             <ul>
                                 <li ref={Option1} onClick={(e) => checkAns(e, 0)}>{currentQuestion.answers[0]}</li>
                                 <li ref={Option2} onClick={(e) => checkAns(e, 1)}>{currentQuestion.answers[1]}</li>
@@ -153,7 +166,7 @@ const QuizComponent = () => {
                                 <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
                             </ul>
                             <button onClick={next}>Next</button>
-                            <div className="index">{index + 1} of {currentQuiz.questions.length} questions</div>
+                            <div className="index">{questionIndex + 1} of {currentQuiz.questions.length} questions</div>
                         </>
                     ) : (
                         <>
@@ -169,4 +182,5 @@ const QuizComponent = () => {
 };
 
 export default QuizComponent;
+
 
