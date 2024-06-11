@@ -1,4 +1,4 @@
-.container{
+.quizcontainer{
     width: 640px;
     margin: auto;
     margin-top: 150px;
@@ -11,19 +11,19 @@
     padding: 40px 50px;
 }
 
-.container hr{
+.quizcontainer hr{
     height: 2px;
     border: none;
     background: #707070;
 
 }
 
-.container h2{
+.quizcontainer h2{
     font-size: 27px;
     font-weight: 500;
 }
 
-.container ul li{
+.quizcontainer ul li{
     display: flex;
     align-items: center;
     height: 70px;
@@ -35,7 +35,7 @@
     cursor: pointer;
 }
 
-.container button{
+.quizcontainer button{
     margin: auto;
     width: 250px;
     height: 65px;
@@ -47,17 +47,17 @@
     cursor: pointer;
 }
 
-.container .index{
+.quizcontainer .index{
     margin: auto;
     font-size: 18px;
 }
 
-.container .correct{
+.quizcontainer .correct{
     background: #dffff2;
     border-color: #00d397;
 }
 
-.container .wrong{
+.quizcontainer .wrong{
     background: #ffebeb;
     border-color: #ff4a4a;
 }

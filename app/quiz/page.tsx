@@ -1,5 +1,6 @@
 'use client'; // This is a client component
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import './quiz.css';
 import { collection, getDocs, doc, getDoc, DocumentData } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
@@ -28,9 +29,16 @@ const QuizComponent = () => {
     const { user } = useAuth();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [courses, setCourses] = useState<{ [key: string]: Course }>({});
-    const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number }>({});
-    const [score, setScore] = useState<number | null>(null);
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [index, setIndex] = useState(0);
+    const [lock, setLock] = useState(false);
+    const [score, setScore] = useState(0);
+    const [result, setResult] = useState(false);
+
+    const Option1 = useRef<HTMLLIElement>(null);
+    const Option2 = useRef<HTMLLIElement>(null);
+    const Option3 = useRef<HTMLLIElement>(null);
+    const Option4 = useRef<HTMLLIElement>(null);
+    const OptionArray = [Option1, Option2, Option3, Option4];
 
     useEffect(() => {
         const fetchQuizzes = async () => {
@@ -82,76 +90,83 @@ const QuizComponent = () => {
         fetchQuizzes();
     }, [user]);
 
-    const handleAnswerChange = (questionIndex: number, answerIndex: number) => {
-        setSelectedAnswers((prev) => ({
-            ...prev,
-            [questionIndex]: answerIndex,
-        }));
+    const checkAns = (e: React.MouseEvent<HTMLLIElement>, ans: number) => {
+        if (lock === false && quizzes.length > 0) {
+            const currentQuiz = quizzes[quizIndex];
+            const currentQuestion = currentQuiz.questions[questionIndex];
+
+            if (currentQuestion.correctAnswer === ans) {
+                e.currentTarget.classList.add("correct");
+                setLock(true);
+                setScore((prev) => prev + 1);
+            } else {
+                e.currentTarget.classList.add("wrong");
+                setLock(true);
+                OptionArray[currentQuestion.correctAnswer].current!.classList.add("correct");
+            }
+        }
     };
 
-    const handleSubmit = () => {
-        let score = 0;
-        quizzes.forEach((quiz) => {
-            quiz.questions.forEach((question, index) => {
-                if (selectedAnswers[index] === question.correctAnswer) {
-                    score++;
-                }
+    const next = () => {
+        if (lock === true) {
+            if (index === quizzes[0].questions.length - 1) {
+                setResult(true);
+                return;
+            }
+            setIndex((prevIndex) => prevIndex + 1);
+            setLock(false);
+            OptionArray.forEach((option) => {
+                option.current!.classList.remove("wrong");
+                option.current!.classList.remove("correct");
             });
-        });
-        setScore(score);
-        setIsSubmitted(true);
+        }
+    };
+
+    const reset = () => {
+        setIndex(0);
+        setScore(0);
+        setLock(false);
+        setResult(false);
     };
 
     if (!user) {
         return <div className="text-center mt-5">Loading...</div>;
     }
 
+    const currentQuiz = quizzes.length > 0 ? quizzes[0] : null;
+    const currentQuestion = currentQuiz ? currentQuiz.questions[index] : null;
+    const course = currentQuiz ? courses[currentQuiz.courseId] : null;
+
     return (
-        <div className="container mt-5">
-            <h1 className="text-center mb-4">Quizzes</h1>
-            {quizzes.length > 0 ? (
-                quizzes.map((quiz) => {
-                    const course = courses[quiz.courseId];
-                    return (
-                        <div key={quiz.id} className="mb-5">
-                            <h2>{course?.name} ({course?.courseCode})</h2>
-                            {quiz.questions.map((question, qIndex) => (
-                                <div key={qIndex} className="mb-3">
-                                    <p><strong>{question.question}</strong></p>
-                                    {question.answers.map((answer, aIndex) => (
-                                        <div key={aIndex} className="form-check">
-                                            <input
-                                                className="form-check-input"
-                                                type="radio"
-                                                name={`question-${qIndex}`}
-                                                id={`question-${qIndex}-answer-${aIndex}`}
-                                                value={aIndex}
-                                                onChange={() => handleAnswerChange(qIndex, aIndex)}
-                                                checked={selectedAnswers[qIndex] === aIndex}
-                                                disabled={isSubmitted} // Disable input after submission
-                                            />
-                                            <label className="form-check-label" htmlFor={`question-${qIndex}-answer-${aIndex}`}>
-                                                {answer}
-                                            </label>
-                                            {isSubmitted && aIndex === question.correctAnswer && (
-                                                <span className="text-success"> (Correct answer)</span>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            ))}
-                        </div>
-                    );
-                })
-            ) : (
-                <p>No quizzes available</p>
+        <div className='quizcontainer'>
+            {currentQuiz && course && (
+                <>
+                    <h1>{course.name} ({course.courseCode})</h1>
+                    <hr />
+                    {!result ? (
+                        <>
+                            <h2>{index + 1}. {currentQuestion.question}</h2>
+                            <ul>
+                                <li ref={Option1} onClick={(e) => checkAns(e, 0)}>{currentQuestion.answers[0]}</li>
+                                <li ref={Option2} onClick={(e) => checkAns(e, 1)}>{currentQuestion.answers[1]}</li>
+                                <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
+                                <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
+                            </ul>
+                            <button onClick={next}>Next</button>
+                            <div className="index">{index + 1} of {currentQuiz.questions.length} questions</div>
+                        </>
+                    ) : (
+                        <>
+                            <h2>You Scored {score} out of {currentQuiz.questions.length}</h2>
+                            <button onClick={reset}>Reset</button>
+                        </>
+                    )}
+                </>
             )}
-            <div className="text-center">
-                {!isSubmitted && <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>}
-                {score !== null && <h2 className="mt-4">Your score: {score}</h2>}
-            </div>
+            {!currentQuiz && <p>No quizzes available</p>}
         </div>
     );
 };
 
 export default QuizComponent;
+
