@@ -13,7 +13,7 @@ interface Course {
     time: string;
 }
 
-const Dashboard = () => {
+const CourseList = () => {
     const { user } = useAuth();
     const [courses, setCourses] = useState<Course[]>([]);
 
@@ -104,4 +104,4 @@ const Dashboard = () => {
     );
 }
 
-export default Dashboard;
+export default CourseList;
