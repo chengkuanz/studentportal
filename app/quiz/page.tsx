@@ -42,10 +42,9 @@ const QuizComponent = () => {
                     id: doc.id,
                     contentId: data.contentId,
                     questions: data.questions,
+                    courseId: '', // Placeholder for courseId
                 };
             });
-
-            setQuizzes(quizList);
 
             // Fetch course details for each quiz based on contentId
             const contentPromises = quizList.map((quiz) => getDoc(doc(db, 'courseContent', quiz.contentId)));
