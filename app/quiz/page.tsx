@@ -8,6 +8,7 @@ interface Quiz {
     id: string;
     contentId: string;
     questions: Question[];
+    courseId: string;
 }
 
 interface Question {
@@ -16,9 +17,16 @@ interface Question {
     question: string;
 }
 
+interface Course {
+    id: string;
+    name: string;
+    courseCode: string;
+}
+
 const QuizComponent = () => {
     const { user } = useAuth();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+    const [courses, setCourses] = useState<{ [key: string]: Course }>({});
     const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number }>({});
     const [score, setScore] = useState<number | null>(null);
 
@@ -36,7 +44,38 @@ const QuizComponent = () => {
                     questions: data.questions,
                 };
             });
+
             setQuizzes(quizList);
+
+            // Fetch course details for each quiz based on contentId
+            const contentPromises = quizList.map((quiz) => getDoc(doc(db, 'courseContent', quiz.contentId)));
+            const contentSnapshots = await Promise.all(contentPromises);
+            const courseIds = contentSnapshots.map((contentSnapshot) => {
+                const data = contentSnapshot.data() as DocumentData;
+                return data.courseDocId;
+            });
+
+            const uniqueCourseIds = Array.from(new Set(courseIds)); // Remove duplicates
+
+            const coursePromises = uniqueCourseIds.map((courseId) => getDoc(doc(db, 'courses', courseId)));
+            const courseSnapshots = await Promise.all(coursePromises);
+            const courseDetails: { [key: string]: Course } = {};
+            courseSnapshots.forEach((courseSnapshot) => {
+                const data = courseSnapshot.data() as DocumentData;
+                courseDetails[courseSnapshot.id] = {
+                    id: courseSnapshot.id,
+                    name: data.name,
+                    courseCode: data.courseCode,
+                };
+            });
+            setCourses(courseDetails);
+
+            // Add courseId to each quiz
+            const updatedQuizzes = quizList.map((quiz, index) => ({
+                ...quiz,
+                courseId: courseIds[index],
+            }));
+            setQuizzes(updatedQuizzes);
         };
 
         fetchQuizzes();
@@ -69,28 +108,31 @@ const QuizComponent = () => {
         <div style={{ width: '80%', margin: 'auto', marginTop: '20px' }}>
             <h1>Quizzes</h1>
             {quizzes.length > 0 ? (
-                quizzes.map((quiz) => (
-                    <div key={quiz.id}>
-                        <h2>Quiz: {quiz.contentId}</h2>
-                        {quiz.questions.map((question, qIndex) => (
-                            <div key={qIndex} style={{ marginBottom: '20px' }}>
-                                <p>{question.question}</p>
-                                {question.answers.map((answer, aIndex) => (
-                                    <div key={aIndex}>
-                                        <input
-                                            type="radio"
-                                            name={`question-${qIndex}`}
-                                            value={aIndex}
-                                            onChange={() => handleAnswerChange(qIndex, aIndex)}
-                                            checked={selectedAnswers[qIndex] === aIndex}
-                                        />
-                                        <label>{answer}</label>
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                ))
+                quizzes.map((quiz) => {
+                    const course = courses[quiz.courseId];
+                    return (
+                        <div key={quiz.id}>
+                            <h2>Course: {course?.name} ({course?.courseCode})</h2>
+                            {quiz.questions.map((question, qIndex) => (
+                                <div key={qIndex} style={{ marginBottom: '20px' }}>
+                                    <p>{question.question}</p>
+                                    {question.answers.map((answer, aIndex) => (
+                                        <div key={aIndex}>
+                                            <input
+                                                type="radio"
+                                                name={`question-${qIndex}`}
+                                                value={aIndex}
+                                                onChange={() => handleAnswerChange(qIndex, aIndex)}
+                                                checked={selectedAnswers[qIndex] === aIndex}
+                                            />
+                                            <label>{answer}</label>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                })
             ) : (
                 <p>No quizzes available</p>
             )}
