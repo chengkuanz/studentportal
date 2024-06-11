@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, getDoc, DocumentData } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface Quiz {
     id: string;
@@ -29,6 +30,7 @@ const QuizComponent = () => {
     const [courses, setCourses] = useState<{ [key: string]: Course }>({});
     const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number }>({});
     const [score, setScore] = useState<number | null>(null);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     useEffect(() => {
         const fetchQuizzes = async () => {
@@ -97,34 +99,43 @@ const QuizComponent = () => {
             });
         });
         setScore(score);
+        setIsSubmitted(true);
     };
 
     if (!user) {
-        return <div>Loading...</div>;
+        return <div className="text-center mt-5">Loading...</div>;
     }
 
     return (
-        <div style={{ width: '80%', margin: 'auto', marginTop: '20px' }}>
-            <h1>Quizzes</h1>
+        <div className="container mt-5">
+            <h1 className="text-center mb-4">Quizzes</h1>
             {quizzes.length > 0 ? (
                 quizzes.map((quiz) => {
                     const course = courses[quiz.courseId];
                     return (
-                        <div key={quiz.id}>
-                            <h2>Course: {course?.name} ({course?.courseCode})</h2>
+                        <div key={quiz.id} className="mb-5">
+                            <h2>{course?.name} ({course?.courseCode})</h2>
                             {quiz.questions.map((question, qIndex) => (
-                                <div key={qIndex} style={{ marginBottom: '20px' }}>
-                                    <p>{question.question}</p>
+                                <div key={qIndex} className="mb-3">
+                                    <p><strong>{question.question}</strong></p>
                                     {question.answers.map((answer, aIndex) => (
-                                        <div key={aIndex}>
+                                        <div key={aIndex} className="form-check">
                                             <input
+                                                className="form-check-input"
                                                 type="radio"
                                                 name={`question-${qIndex}`}
+                                                id={`question-${qIndex}-answer-${aIndex}`}
                                                 value={aIndex}
                                                 onChange={() => handleAnswerChange(qIndex, aIndex)}
                                                 checked={selectedAnswers[qIndex] === aIndex}
+                                                disabled={isSubmitted} // Disable input after submission
                                             />
-                                            <label>{answer}</label>
+                                            <label className="form-check-label" htmlFor={`question-${qIndex}-answer-${aIndex}`}>
+                                                {answer}
+                                            </label>
+                                            {isSubmitted && aIndex === question.correctAnswer && (
+                                                <span className="text-success"> (Correct answer)</span>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -135,8 +146,10 @@ const QuizComponent = () => {
             ) : (
                 <p>No quizzes available</p>
             )}
-            <button onClick={handleSubmit}>Submit</button>
-            {score !== null && <h2>Your score: {score}</h2>}
+            <div className="text-center">
+                {!isSubmitted && <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>}
+                {score !== null && <h2 className="mt-4">Your score: {score}</h2>}
+            </div>
         </div>
     );
 };
