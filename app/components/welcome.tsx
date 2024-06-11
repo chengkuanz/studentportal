@@ -74,6 +74,7 @@ const WelcomeCarousel = () => {
                 </Carousel.Item>
             </Carousel>
         </div>
+
     );
 }
 
