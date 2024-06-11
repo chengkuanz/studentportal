@@ -40,8 +40,8 @@ const NavbarComp = () => {
                                 </Link>
                             </>
                         )}
-                        <Link href="/login" passHref legacyBehavior>
-                            <Nav.Link>Login-SampleTab</Nav.Link>
+                        <Link href="/quiz" passHref legacyBehavior>
+                            <Nav.Link>Quiz</Nav.Link>
                         </Link>
                         <Link href="/course" passHref legacyBehavior>
                             <Nav.Link>Course</Nav.Link>
