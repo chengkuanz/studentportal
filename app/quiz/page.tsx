@@ -150,3 +150,8 @@ const QuizComponent = () => {
                 {!isSubmitted && <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>}
                 {score !== null && <h2 className="mt-4">Your score: {score}</h2>}
             </div>
+        </div>
+    );
+};
+
+export default QuizComponent;
