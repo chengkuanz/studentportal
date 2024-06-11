@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import {gray} from "next/dist/lib/picocolors";
 
 const Footer = () => {
     return (
