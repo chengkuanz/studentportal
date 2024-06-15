@@ -46,6 +46,9 @@ const NavbarComp = () => {
                         <Link href="/course" passHref legacyBehavior>
                             <Nav.Link>Course</Nav.Link>
                         </Link>
+                        <Link href="/registerCourses" passHref legacyBehavior>
+                            <Nav.Link>Register</Nav.Link>
+                        </Link>
                         <Link href="/announcements/announcementList" passHref legacyBehavior>
                             <Nav.Link>Announcements</Nav.Link>
                         </Link>

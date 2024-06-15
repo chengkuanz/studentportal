@@ -13,7 +13,7 @@ interface Course {
     releaseDate: string;
 
 }
-function includesOne(collection, search){
+function includesOne(collection:any, search:any){
     for (let x of search){
         if(collection.includes(x)){
             return true;
