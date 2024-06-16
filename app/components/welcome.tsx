@@ -50,9 +50,9 @@ const WelcomeCarousel: React.FC = () => {
                     <Carousel.Caption>
                         <h1 className="display-1"
                             style={{ fontFamily: "Times New Roman, Times, serif", fontSize: "60px" }}>
-                            Watch interactive videos and immerse yourself in Italian Art & Culture
+                            Watch interactive videos and immerse yourself in Italian Art &amp; Culture
                         </h1>
-                        <p>Guarda video interattivi e immergiti nell'arte e nella cultura italiana</p>
+                        <p>Guarda video interattivi e immergiti nell&apos;arte e nella cultura italiana</p>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item style={carouselItemStyle}>
@@ -68,7 +68,7 @@ const WelcomeCarousel: React.FC = () => {
                             Master Italian with our engaging learning tools
                         </h1>
                         <p>
-                            Padroneggia l'italiano con i nostri coinvolgenti strumenti di apprendimento
+                            Padroneggia l&apos;italiano con i nostri coinvolgenti strumenti di apprendimento
                         </p>
                     </Carousel.Caption>
                 </Carousel.Item>
