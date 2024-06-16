@@ -3,14 +3,14 @@ import React from 'react';
 import { Button, Carousel } from 'react-bootstrap';
 import Image from 'react-bootstrap/Image';
 
-const WelcomeCarousel = () => {
+const WelcomeCarousel: React.FC = () => {
     // Inline styles
-    const carouselItemStyle = {
+    const carouselItemStyle: React.CSSProperties = {
         height: '800px',
         width: '100%'
     };
 
-    const imageStyle = {
+    const imageStyle: React.CSSProperties = {
         position: 'absolute',
         top: 0,
         left: 0,
@@ -50,9 +50,9 @@ const WelcomeCarousel = () => {
                     <Carousel.Caption>
                         <h1 className="display-1"
                             style={{ fontFamily: "Times New Roman, Times, serif", fontSize: "60px" }}>
-                            Watch interactive videos and immerse yourself in Italian Art & Culture
+                            Watch interactive videos and immerse yourself in Italian Art &amp; Culture
                         </h1>
-                        <p>Guarda video interattivi e immergiti nell'arte e nella cultura italiana</p>
+                        <p>Guarda video interattivi e immergiti nell&apos;arte e nella cultura italiana</p>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item style={carouselItemStyle}>
@@ -68,13 +68,12 @@ const WelcomeCarousel = () => {
                             Master Italian with our engaging learning tools
                         </h1>
                         <p>
-                            Padroneggia l'italiano con i nostri coinvolgenti strumenti di apprendimento
+                            Padroneggia l&apos;italiano con i nostri coinvolgenti strumenti di apprendimento
                         </p>
                     </Carousel.Caption>
                 </Carousel.Item>
             </Carousel>
         </div>
-
     );
 }
 
