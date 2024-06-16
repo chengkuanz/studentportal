@@ -3,14 +3,14 @@ import React from 'react';
 import { Button, Carousel } from 'react-bootstrap';
 import Image from 'react-bootstrap/Image';
 
-const WelcomeCarousel = () => {
+const WelcomeCarousel: React.FC = () => {
     // Inline styles
-    const carouselItemStyle = {
+    const carouselItemStyle: React.CSSProperties = {
         height: '800px',
         width: '100%'
     };
 
-    const imageStyle = {
+    const imageStyle: React.CSSProperties = {
         position: 'absolute',
         top: 0,
         left: 0,
@@ -74,7 +74,6 @@ const WelcomeCarousel = () => {
                 </Carousel.Item>
             </Carousel>
         </div>
-
     );
 }
 
