@@ -96,14 +96,16 @@ const QuizComponent = () => {
             const currentQuiz = quizzes[quizIndex];
             const currentQuestion = currentQuiz.questions[questionIndex];
 
-            if (currentQuestion.correctAnswer === ans) {
+            if (currentQuestion && currentQuestion.correctAnswer === ans) {
                 e.currentTarget.classList.add("correct");
                 setLock(true);
                 setScore((prev) => prev + 1);
             } else {
                 e.currentTarget.classList.add("wrong");
                 setLock(true);
-                OptionArray[currentQuestion.correctAnswer].current!.classList.add("correct");
+                if (currentQuestion) {
+                    OptionArray[currentQuestion.correctAnswer].current!.classList.add("correct");
+                }
             }
         }
     };
@@ -129,8 +131,10 @@ const QuizComponent = () => {
     const resetOptions = () => {
         setLock(false);
         OptionArray.forEach((option) => {
-            option.current!.classList.remove("wrong");
-            option.current!.classList.remove("correct");
+            if (option.current) {
+                option.current.classList.remove("wrong");
+                option.current.classList.remove("correct");
+            }
         });
     };
 
@@ -158,15 +162,19 @@ const QuizComponent = () => {
                     <hr />
                     {!result ? (
                         <>
-                            <h2>{questionIndex + 1}. {currentQuestion.question}</h2>
-                            <ul>
-                                <li ref={Option1} onClick={(e) => checkAns(e, 0)}>{currentQuestion.answers[0]}</li>
-                                <li ref={Option2} onClick={(e) => checkAns(e, 1)}>{currentQuestion.answers[1]}</li>
-                                <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
-                                <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
-                            </ul>
-                            <button onClick={next}>Next</button>
-                            <div className="index">{questionIndex + 1} of {currentQuiz.questions.length} questions</div>
+                            {currentQuestion && (
+                                <>
+                                    <h2>{questionIndex + 1}. {currentQuestion.question}</h2>
+                                    <ul>
+                                        <li ref={Option1} onClick={(e) => checkAns(e, 0)}>{currentQuestion.answers[0]}</li>
+                                        <li ref={Option2} onClick={(e) => checkAns(e, 1)}>{currentQuestion.answers[1]}</li>
+                                        <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
+                                        <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
+                                    </ul>
+                                    <button onClick={next}>Next</button>
+                                    <div className="index">{questionIndex + 1} of {currentQuiz.questions.length} questions</div>
+                                </>
+                            )}
                         </>
                     ) : (
                         <>
