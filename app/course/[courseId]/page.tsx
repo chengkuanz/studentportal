@@ -58,18 +58,20 @@ const CourseDetails = () => {
                 const contents: CourseContent[] = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data() as DocumentData;
-                    contents.push({
-                        id: doc.id,
-                        title: data.title,
-                        textContent: data.textContent,
-                        open: data.open,
-                        close: data.close,
-                        due: data.due,
-                        type: data.type,
-                        contentOrder: data.contentOrder,
-                        courseDocId: data.courseDocId,
-                        videoUrl: data.type === 'video' ? data.videoUrl : '',
-                    });
+                    if (data.type !== 'quiz') {
+                        contents.push({
+                            id: doc.id,
+                            title: data.title,
+                            textContent: data.textContent,
+                            open: data.open,
+                            close: data.close,
+                            due: data.due,
+                            type: data.type,
+                            contentOrder: data.contentOrder,
+                            courseDocId: data.courseDocId,
+                            videoUrl: data.type === 'video' ? data.videoUrl : '',
+                        });
+                    }
                 });
                 setCourseContents(contents.sort((a, b) => a.contentOrder - b.contentOrder));
             }
@@ -118,7 +120,8 @@ const CourseDetails = () => {
                 {courseContents.map((content) => (
                     <div key={content.id}
                          style={{marginTop: '20px', border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
-                        <h3 style={{marginBottom: '10px'}}>{content.title}</h3>
+                        <h3 style={{marginBottom: '10px'}}>Chapter {content.contentOrder}</h3>
+                        <h4 style={{marginBottom: '10px'}}>{content.title}</h4>
                         <p><strong>Type:</strong> {content.type}</p>
                         <div dangerouslySetInnerHTML={{__html: content.textContent}}/>
                         <p><strong>Open:</strong> {content.open}</p>
