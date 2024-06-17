@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from "@/context/AuthContext";
+import styles from './CourseDetails.module.css';
 
 interface Course {
     id: string;
@@ -58,7 +59,7 @@ const CourseDetails = () => {
                 const contents: CourseContent[] = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data() as DocumentData;
-                    if (data.type === 'video') {
+                    if (data.type !== 'quiz') {
                         contents.push({
                             id: doc.id,
                             title: data.title,
@@ -69,25 +70,11 @@ const CourseDetails = () => {
                             type: data.type,
                             contentOrder: data.contentOrder,
                             courseDocId: data.courseDocId,
-                            videoUrl: data.videoUrl,
-                        });
-                    }
-                    if (data.type === 'text') {
-                        contents.push({
-                            id: doc.id,
-                            title: data.title,
-                            textContent: data.textContent,
-                            open: data.open,
-                            close: data.close,
-                            due: data.due,
-                            type: data.type,
-                            contentOrder: data.contentOrder,
-                            courseDocId: data.courseDocId,
-                            videoUrl: '',
+                            videoUrl: data.type === 'video' ? data.videoUrl : '',
                         });
                     }
                 });
-                setCourseContents(contents);
+                setCourseContents(contents.sort((a, b) => a.contentOrder - b.contentOrder));
             }
         };
 
@@ -111,15 +98,8 @@ const CourseDetails = () => {
     }
 
     return (
-        <div
-            style={{
-                width: '60%',
-                margin: 'auto',
-                textAlign: 'left',
-                marginTop: '20px'
-            }}
-        >
-            <table>
+        <div className={styles.container}>
+            <table className={styles.table}>
                 <tbody>
                 <tr>
                     <td>{course.name}</td>
@@ -132,30 +112,22 @@ const CourseDetails = () => {
             <div>
                 <h2>Course Contents</h2>
                 {courseContents.map((content) => (
-                    <div key={content.id}
-                         style={{marginTop: '20px', border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
-                        <h3 style={{marginBottom: '10px'}}>{content.title}</h3>
+                    <div key={content.id} className={styles.content}>
+                        <h3>Chapter {content.contentOrder}</h3>
+                        <h4>{content.title}</h4>
                         <p><strong>Type:</strong> {content.type}</p>
-                        <div dangerouslySetInnerHTML={{__html: content.textContent}}/>
+                        <div dangerouslySetInnerHTML={{ __html: content.textContent }} />
                         <p><strong>Open:</strong> {content.open}</p>
                         <p><strong>Close:</strong> {content.close}</p>
                         <p><strong>Due:</strong> {content.due}</p>
 
                         {content.type === 'video' && (
-                            <div style={{marginTop: '10px'}}>
-                                <video width="320" height="240" controls>
-                                    <source src={content.videoUrl} type="video/mp4"/>
+                            <div className={styles.videocontainer}>
+                                <video controls>
+                                    <source src={content.videoUrl} type="video/mp4" />
                                     Your browser does not support the video tag.
                                 </video>
-                                <a href={content.videoUrl} download style={{
-                                    display: 'inline-block',
-                                    marginTop: '10px',
-                                    padding: '10px 15px',
-                                    backgroundColor: '#007BFF',
-                                    color: '#fff',
-                                    borderRadius: '5px',
-                                    textDecoration: 'none'
-                                }}>Download Video</a>
+                                <a href={content.videoUrl} download className={styles.downloadlink}>Download Video</a>
                             </div>
                         )}
                     </div>
