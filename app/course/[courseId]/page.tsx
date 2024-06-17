@@ -58,36 +58,20 @@ const CourseDetails = () => {
                 const contents: CourseContent[] = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data() as DocumentData;
-                    if (data.type === 'video') {
-                        contents.push({
-                            id: doc.id,
-                            title: data.title,
-                            textContent: data.textContent,
-                            open: data.open,
-                            close: data.close,
-                            due: data.due,
-                            type: data.type,
-                            contentOrder: data.contentOrder,
-                            courseDocId: data.courseDocId,
-                            videoUrl: data.videoUrl,
-                        });
-                    }
-                    if (data.type === 'text') {
-                        contents.push({
-                            id: doc.id,
-                            title: data.title,
-                            textContent: data.textContent,
-                            open: data.open,
-                            close: data.close,
-                            due: data.due,
-                            type: data.type,
-                            contentOrder: data.contentOrder,
-                            courseDocId: data.courseDocId,
-                            videoUrl: '',
-                        });
-                    }
+                    contents.push({
+                        id: doc.id,
+                        title: data.title,
+                        textContent: data.textContent,
+                        open: data.open,
+                        close: data.close,
+                        due: data.due,
+                        type: data.type,
+                        contentOrder: data.contentOrder,
+                        courseDocId: data.courseDocId,
+                        videoUrl: data.type === 'video' ? data.videoUrl : '',
+                    });
                 });
-                setCourseContents(contents);
+                setCourseContents(contents.sort((a, b) => a.contentOrder - b.contentOrder));
             }
         };
 
