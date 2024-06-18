@@ -27,9 +27,10 @@ interface Course {
 
 const QuizComponent = () => {
     const { user } = useAuth();
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-    const [courses, setCourses] = useState<{ [key: string]: Course }>({});
-    const [quizIndex, setQuizIndex] = useState(0);
+    const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
     const [questionIndex, setQuestionIndex] = useState(0);
     const [lock, setLock] = useState(false);
     const [score, setScore] = useState(0);
@@ -42,59 +43,63 @@ const QuizComponent = () => {
     const OptionArray = [Option1, Option2, Option3, Option4];
 
     useEffect(() => {
-        const fetchQuizzes = async () => {
+        const fetchCourses = async () => {
             if (!user) return;
 
-            const quizzesCollection = collection(db, 'quizzes');
-            const quizSnapshots = await getDocs(quizzesCollection);
-            const quizList = quizSnapshots.docs.map((doc) => {
+            const coursesCollection = collection(db, 'courses');
+            const courseSnapshots = await getDocs(coursesCollection);
+            const courseList = courseSnapshots.docs.map((doc) => {
                 const data = doc.data() as DocumentData;
                 return {
                     id: doc.id,
-                    contentId: data.contentId,
-                    questions: data.questions,
-                    courseId: '', // Placeholder for courseId
-                };
-            });
-
-            // Fetch course details for each quiz based on contentId
-            const contentPromises = quizList.map((quiz) => getDoc(doc(db, 'courseContent', quiz.contentId)));
-            const contentSnapshots = await Promise.all(contentPromises);
-            const courseIds = contentSnapshots.map((contentSnapshot) => {
-                const data = contentSnapshot.data() as DocumentData;
-                return data.courseDocId;
-            });
-
-            const uniqueCourseIds = Array.from(new Set(courseIds)); // Remove duplicates
-
-            const coursePromises = uniqueCourseIds.map((courseId) => getDoc(doc(db, 'courses', courseId)));
-            const courseSnapshots = await Promise.all(coursePromises);
-            const courseDetails: { [key: string]: Course } = {};
-            courseSnapshots.forEach((courseSnapshot) => {
-                const data = courseSnapshot.data() as DocumentData;
-                courseDetails[courseSnapshot.id] = {
-                    id: courseSnapshot.id,
                     name: data.name,
                     courseCode: data.courseCode,
                 };
             });
-            setCourses(courseDetails);
-
-            // Add courseId to each quiz
-            const updatedQuizzes = quizList.map((quiz, index) => ({
-                ...quiz,
-                courseId: courseIds[index],
-            }));
-            setQuizzes(updatedQuizzes);
+            setCourses(courseList);
         };
 
-        fetchQuizzes();
+        fetchCourses();
     }, [user]);
 
+    const fetchQuizzes = async (courseId: string) => {
+        const quizzesCollection = collection(db, 'quizzes');
+        const quizSnapshots = await getDocs(quizzesCollection);
+        const quizList = quizSnapshots.docs.map((doc) => {
+            const data = doc.data() as DocumentData;
+            return {
+                id: doc.id,
+                contentId: data.contentId,
+                questions: data.questions,
+                courseId: '', // Placeholder for courseId
+            };
+        });
+
+        const contentPromises = quizList.map((quiz) => getDoc(doc(db, 'courseContent', quiz.contentId)));
+        const contentSnapshots = await Promise.all(contentPromises);
+
+        const filteredQuizzes = quizList.filter((quiz, index) => {
+            const contentSnapshot = contentSnapshots[index];
+            if (contentSnapshot.exists()) {
+                const data = contentSnapshot.data() as DocumentData;
+                return data.courseDocId === courseId;
+            }
+            return false;
+        }).map((quiz, index) => {
+            const contentSnapshot = contentSnapshots[index];
+            const data = contentSnapshot.data() as DocumentData;
+            return {
+                ...quiz,
+                courseId: data.courseDocId,
+            };
+        });
+
+        setQuizzes(filteredQuizzes);
+    };
+
     const checkAns = (e: React.MouseEvent<HTMLLIElement>, ans: number) => {
-        if (lock === false && quizzes.length > 0) {
-            const currentQuiz = quizzes[quizIndex];
-            const currentQuestion = currentQuiz.questions[questionIndex];
+        if (lock === false && selectedQuiz) {
+            const currentQuestion = selectedQuiz.questions[questionIndex];
 
             if (currentQuestion && currentQuestion.correctAnswer === ans) {
                 e.currentTarget.classList.add("correct");
@@ -111,16 +116,9 @@ const QuizComponent = () => {
     };
 
     const next = () => {
-        if (lock === true) {
-            const currentQuiz = quizzes[quizIndex];
-            if (questionIndex === currentQuiz.questions.length - 1) {
-                if (quizIndex === quizzes.length - 1) {
-                    setResult(true);
-                } else {
-                    setQuizIndex((prevIndex) => prevIndex + 1);
-                    setQuestionIndex(0);
-                    resetOptions();
-                }
+        if (lock === true && selectedQuiz) {
+            if (questionIndex === selectedQuiz.questions.length - 1) {
+                setResult(true);
             } else {
                 setQuestionIndex((prevIndex) => prevIndex + 1);
                 resetOptions();
@@ -139,7 +137,7 @@ const QuizComponent = () => {
     };
 
     const reset = () => {
-        setQuizIndex(0);
+        setSelectedQuiz(null);
         setQuestionIndex(0);
         setScore(0);
         setLock(false);
@@ -150,15 +148,35 @@ const QuizComponent = () => {
         return <div className="text-center mt-5">Loading...</div>;
     }
 
-    const currentQuiz = quizzes.length > 0 ? quizzes[quizIndex] : null;
-    const currentQuestion = currentQuiz ? currentQuiz.questions[questionIndex] : null;
-    const course = currentQuiz ? courses[currentQuiz.courseId] : null;
+    const currentQuestion = selectedQuiz ? selectedQuiz.questions[questionIndex] : null;
 
     return (
         <div className='quizcontainer'>
-            {currentQuiz && course && (
+            {!selectedCourse ? (
                 <>
-                    <h1>{course.name} ({course.courseCode})</h1>
+                    <h1>Select a Course</h1>
+                    <ul>
+                        {courses.map((course) => (
+                            <li key={course.id} onClick={() => { setSelectedCourse(course); fetchQuizzes(course.id); }}>
+                                {course.name} ({course.courseCode})
+                            </li>
+                        ))}
+                    </ul>
+                </>
+            ) : !selectedQuiz ? (
+                <>
+                    <h1>Select a Quiz for {selectedCourse.name} ({selectedCourse.courseCode})</h1>
+                    <ul>
+                        {quizzes.map((quiz) => (
+                            <li key={quiz.id} onClick={() => setSelectedQuiz(quiz)}>
+                                Quiz {quiz.id}
+                            </li>
+                        ))}
+                    </ul>
+                </>
+            ) : (
+                <>
+                    <h1>{selectedCourse.name} ({selectedCourse.courseCode})</h1>
                     <hr />
                     {!result ? (
                         <>
@@ -172,19 +190,18 @@ const QuizComponent = () => {
                                         <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
                                     </ul>
                                     <button onClick={next}>Next</button>
-                                    <div className="index">{questionIndex + 1} of {currentQuiz.questions.length} questions</div>
+                                    <div className="index">{questionIndex + 1} of {selectedQuiz.questions.length} questions</div>
                                 </>
                             )}
                         </>
                     ) : (
                         <>
-                            <h2>You Scored {score} out of {currentQuiz.questions.length}</h2>
+                            <h2>You Scored {score} out of {selectedQuiz.questions.length}</h2>
                             <button onClick={reset}>Reset</button>
                         </>
                     )}
                 </>
             )}
-            {!currentQuiz && <p>No quizzes available</p>}
         </div>
     );
 };
