@@ -4,6 +4,7 @@ import {collection, getDocs, doc, getDoc, DocumentData} from 'firebase/firestore
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import './styles.css'
 
 interface Course {
     id: string;
@@ -66,47 +67,28 @@ const CourseList = () => {
     }
 
     return (
-        <div
-    style={{
-        width: '100%',
-        maxWidth: '600px',
-        margin: 'auto',
-        textAlign: 'left',
-        marginTop: '20px',
-        padding: '0 10px'
-    }}
->
-    <h1>Courses you can register for:</h1>
-
-    {courses.length > 0 ? (
-        <table style={{ width: '100%' }}>
-            <thead>
-            <tr>
-                <th>Course Name</th>
-                <th>Course Code</th>
-                <th>Day of Week</th>
-                <th>Time</th>
-            </tr>
-            </thead>
-            <tbody>
-            {courses.map(course => (
-                <tr key={course.id}>
-                    <td>
-                        <Link href={`/registerCourses/${course.id}`}>
-                            {course.name}
-                        </Link>
-                    </td>
-                    <td>{course.courseCode}</td>
-                    <td>{course.dayOfWeek}</td>
-                    <td>{course.time}</td>
-                </tr>
-            ))}
-            </tbody>
-        </table>
-    ) : (
-        <p>you have registered for all of the courses</p>
-    )}
-</div>
+        <div className="row">
+            {courses.length > 0 ? (
+                courses.map(course => (
+                    <div className="col-md-4 col-xl-3" key={course.id}>
+                        <div className="card bg-c-green order-card">
+                            <div className="card-block">
+                                <h6 className="m-b-20">{course.name}</h6>
+                                <h2 className="text-right">
+                                    <i className="fa fa-book f-left"></i>
+                                    <span>{course.courseCode}</span>
+                                </h2>
+                                <p className="m-b-0">Day: <span className="f-right">{course.dayOfWeek}</span></p>
+                                <p className="m-b-0">Time: <span className="f-right">{course.time}</span></p>
+                                <Link href={`/registerCourses/${course.id}`} className="btn btn-primary mt-3">Register</Link>
+                            </div>
+                        </div>
+                    </div>
+                ))
+            ) : (
+                <p>You have registered for all of the courses</p>
+            )}
+        </div>
     );
 }
 
