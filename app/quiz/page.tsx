@@ -1,10 +1,10 @@
 'use client'; // This is a client component
 import React, { useEffect, useState, useRef } from 'react';
-import './quiz.css';
 import { collection, getDocs, doc, getDoc, DocumentData } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './quiz.css';
 
 interface Quiz {
     id: string;
@@ -23,6 +23,8 @@ interface Course {
     id: string;
     name: string;
     courseCode: string;
+    dayOfWeek: string;
+    time: string;
 }
 
 const QuizComponent = () => {
@@ -46,14 +48,30 @@ const QuizComponent = () => {
         const fetchCourses = async () => {
             if (!user) return;
 
+            const userDoc = doc(db, 'users', user.uid);
+            const userSnapshot = await getDoc(userDoc);
+            if (!userSnapshot.exists()) return;
+
+            const userData = userSnapshot.data();
+            const registeredCourses = userData?.registeredCourses || [];
+
+            if (registeredCourses.length === 0) {
+                setCourses([]);
+                return;
+            }
+
             const coursesCollection = collection(db, 'courses');
-            const courseSnapshots = await getDocs(coursesCollection);
-            const courseList = courseSnapshots.docs.map((doc) => {
-                const data = doc.data() as DocumentData;
+            const coursePromises = registeredCourses.map((courseId: string) => getDoc(doc(coursesCollection, courseId)));
+            const courseSnapshots = await Promise.all(coursePromises);
+
+            const courseList = courseSnapshots.map((courseSnapshot) => {
+                const data = courseSnapshot.data() as DocumentData;
                 return {
-                    id: doc.id,
+                    id: courseSnapshot.id,
                     name: data.name,
                     courseCode: data.courseCode,
+                    dayOfWeek: data.dayOfWeek,
+                    time: data.time,
                 };
             });
             setCourses(courseList);
@@ -145,61 +163,72 @@ const QuizComponent = () => {
     };
 
     if (!user) {
-        return <div className="text-center mt-5">Loading...</div>;
+        return <div>Loading...</div>;
     }
 
     const currentQuestion = selectedQuiz ? selectedQuiz.questions[questionIndex] : null;
 
     return (
-        <div className='quizcontainer'>
+        <div className='container mt-5'>
             {!selectedCourse ? (
                 <>
-                    <h1>Select a Course</h1>
-                    <ul>
+                    <h1 className='mb-4'>Your Registered Courses</h1>
+                    <div className='list-group'>
                         {courses.map((course) => (
-                            <li key={course.id} onClick={() => { setSelectedCourse(course); fetchQuizzes(course.id); }}>
+                            <button
+                                key={course.id}
+                                className='list-group-item list-group-item-action'
+                                onClick={() => { setSelectedCourse(course); fetchQuizzes(course.id); }}
+                            >
                                 {course.name} ({course.courseCode})
-                            </li>
+                            </button>
                         ))}
-                    </ul>
+                    </div>
                 </>
             ) : !selectedQuiz ? (
                 <>
-                    <h1>Select a Quiz for {selectedCourse.name} ({selectedCourse.courseCode})</h1>
-                    <ul>
+                    <h1 className='mb-4'>Select a Quiz for {selectedCourse.name} ({selectedCourse.courseCode})</h1>
+                    <div className='list-group'>
                         {quizzes.map((quiz) => (
-                            <li key={quiz.id} onClick={() => setSelectedQuiz(quiz)}>
+                            <button
+                                key={quiz.id}
+                                className='list-group-item list-group-item-action'
+                                onClick={() => setSelectedQuiz(quiz)}
+                            >
                                 Quiz {quiz.id}
-                            </li>
+                            </button>
                         ))}
-                    </ul>
+                    </div>
+                    <button className='btn btn-secondary mt-3' onClick={() => setSelectedCourse(null)}>Back to Courses</button>
                 </>
             ) : (
                 <>
-                    <h1>{selectedCourse.name} ({selectedCourse.courseCode})</h1>
+                    <h1 className='mb-4'>{selectedCourse.name} ({selectedCourse.courseCode})</h1>
                     <hr />
-                    {!result ? (
-                        <>
-                            {currentQuestion && (
-                                <>
-                                    <h2>{questionIndex + 1}. {currentQuestion.question}</h2>
-                                    <ul>
-                                        <li ref={Option1} onClick={(e) => checkAns(e, 0)}>{currentQuestion.answers[0]}</li>
-                                        <li ref={Option2} onClick={(e) => checkAns(e, 1)}>{currentQuestion.answers[1]}</li>
-                                        <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
-                                        <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
-                                    </ul>
-                                    <button onClick={next}>Next</button>
-                                    <div className="index">{questionIndex + 1} of {selectedQuiz.questions.length} questions</div>
-                                </>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            <h2>You Scored {score} out of {selectedQuiz.questions.length}</h2>
-                            <button onClick={reset}>Reset</button>
-                        </>
-                    )}
+                    <div className='quizcontainer'>
+                        {!result ? (
+                            <>
+                                {currentQuestion && (
+                                    <>
+                                        <h2>{questionIndex + 1}. {currentQuestion.question}</h2>
+                                        <ul>
+                                            <li ref={Option1} onClick={(e) => checkAns(e, 0)}>{currentQuestion.answers[0]}</li>
+                                            <li ref={Option2} onClick={(e) => checkAns(e, 1)}>{currentQuestion.answers[1]}</li>
+                                            <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
+                                            <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
+                                        </ul>
+                                        <button onClick={next}>Next</button>
+                                        <div className="index">Question {questionIndex + 1} of {selectedQuiz.questions.length}</div>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <h2>You Scored {score} out of {selectedQuiz.questions.length}</h2>
+                                <button onClick={reset}>Reset</button>
+                            </>
+                        )}
+                    </div>
                 </>
             )}
         </div>
