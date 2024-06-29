@@ -16,7 +16,7 @@ interface Course {
 const Dashboard = () => {
     const { user } = useAuth();
     const [courses, setCourses] = useState<Course[]>([]);
-
+    const [waitingCourses, setWaitingCourses] = useState<Course[]>([]);
     useEffect(() => {
         const fetchCourses = async () => {
             if (!user) return;
@@ -28,11 +28,11 @@ const Dashboard = () => {
 
             const userData = userSnapshot.data();
             const registeredCourses = userData?.registeredCourses || [];
-
-            if (registeredCourses.length === 0) {
-                setCourses([]);
-                return;
-            }
+            const registering = userData?.registering|| [];
+            // if (registeredCourses.length === 0) {
+            //     setCourses([]);
+            //     return;
+            // }
 
             // Fetch the registered courses
             const coursesCollection = collection(db, 'courses');
@@ -50,6 +50,24 @@ const Dashboard = () => {
                 };
             });
             setCourses(courseList);
+
+
+            // Fetch the registered courses
+
+            const coursePromises2 = registering.map((courseId: string) => getDoc(doc(coursesCollection, courseId)));
+            const courseSnapshots2 = await Promise.all(coursePromises2);
+
+            const courseList2 = courseSnapshots2.map((courseSnapshot2) => {
+                const data = courseSnapshot2.data() as DocumentData;
+                return {
+                    id: courseSnapshot2.id,
+                    name: data.name,
+                    courseCode: data.courseCode,
+                    dayOfWeek: data.dayOfWeek,
+                    time: data.time,
+                };
+            });
+            setWaitingCourses(courseList2);
         };
 
         fetchCourses();
@@ -82,6 +100,40 @@ const Dashboard = () => {
                     </thead>
                     <tbody>
                     {courses.map(course => (
+                        <tr key={course.id}>
+                            <td>
+                                <Link href={`/course/${course.id}`}>
+                                    {course.name}
+                                </Link>
+                            </td>
+                            <td>{course.courseCode}</td>
+                            <td>{course.dayOfWeek}</td>
+                            <td>{course.time}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            ) : (
+                <p>No courses registered</p>
+            )}
+
+
+            <br/><br/>
+
+            <h1>Waiting For Register:</h1>
+
+            {waitingCourses.length > 0 ? (
+                <table style={{ width: '100%' }}>
+                    <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Course Code</th>
+                        <th>Day of Week</th>
+                        <th>Time</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {waitingCourses.map(course => (
                         <tr key={course.id}>
                             <td>
                                 <Link href={`/course/${course.id}`}>
