@@ -86,7 +86,7 @@ const RegistrationRequests = () => {
                                     </h2>
                                     <p className="m-b-0">Day: <span className="f-right">{request.dayOfWeek}</span></p>
                                     <p className="m-b-0">Time: <span className="f-right">{request.time}</span></p>
-                                    <Link href={`/registerCourses/${request.id}`} className="btn btn-primary mt-3">Course Page</Link>
+                                    <Link href={`/registerCourses/${request.id}`} className="btn btn-primary mt-3">Go to My Course Page</Link>
                                 </div>
                             </div>
                         </div>
