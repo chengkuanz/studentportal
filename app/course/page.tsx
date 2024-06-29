@@ -1,9 +1,10 @@
 'use client'; // This is a client component
 import React, { useEffect, useState } from 'react';
-import {collection, getDocs, doc, getDoc, DocumentData} from 'firebase/firestore';
+import { collection, getDocs, DocumentData } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import './styles.css'
 
 interface Course {
     id: string;
@@ -11,97 +12,94 @@ interface Course {
     courseCode: string;
     dayOfWeek: string;
     time: string;
+    studentName: string;
+    studentEmail: string;
 }
 
-const CourseList = () => {
+const RegistrationRequests = () => {
     const { user } = useAuth();
-    const [courses, setCourses] = useState<Course[]>([]);
+    const [requests, setRequests] = useState<Course[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchCourses = async () => {
-            if (!user) return;
-
-            // Fetch user data to get registered courses
-            const userDoc = doc(db, 'users', user.uid);
-            const userSnapshot = await getDoc(userDoc);
-            if (!userSnapshot.exists()) return;
-
-            const userData = userSnapshot.data();
-            const registeredCourses = userData?.registeredCourses || [];
-
-            if (registeredCourses.length === 0) {
-                setCourses([]);
+        const fetchRequests = async () => {
+            if (!user) {
+                console.log('No user found');
+                setLoading(false);
                 return;
             }
 
-            // Fetch the registered courses
-            const coursesCollection = collection(db, 'courses');
-            const coursePromises = registeredCourses.map((courseId: string) => getDoc(doc(coursesCollection, courseId)));
-            const courseSnapshots = await Promise.all(coursePromises);
+            try {
+                console.log('Fetching registration requests...');
+                const requestsCollection = collection(db, 'registrationRequests');
+                const requestsSnapshot = await getDocs(requestsCollection);
 
-            const courseList = courseSnapshots.map((courseSnapshot) => {
-                const data = courseSnapshot.data() as DocumentData;
-                return {
-                    id: courseSnapshot.id,
-                    name: data.name,
-                    courseCode: data.courseCode,
-                    dayOfWeek: data.dayOfWeek,
-                    time: data.time,
-                };
-            });
-            setCourses(courseList);
+                const requestList = requestsSnapshot.docs.map((doc) => {
+                    const data = doc.data() as DocumentData;
+                    return {
+                        id: doc.id,
+                        name: data.name,
+                        courseCode: data.courseCode,
+                        dayOfWeek: data.dayOfWeek,
+                        time: data.time,
+                        studentName: data.studentName,
+                        studentEmail: data.studentEmail,
+                    };
+                });
+
+                console.log('Fetched requests:', requestList);
+                setRequests(requestList);
+                setLoading(false);
+            } catch (error) {
+                setError('Failed to fetch registration requests');
+                console.error('Error fetching registration requests:', error);
+                setLoading(false);
+            }
         };
 
-        fetchCourses();
+        fetchRequests();
     }, [user]);
 
-    if (!user) {
+    if (loading) {
         return <div>Loading...</div>;
     }
 
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    const colorClasses = ['bg-c-blue', 'bg-c-green', 'bg-c-yellow', 'bg-c-pink'];
+
     return (
-        <div
-    style={{
-        width: '100%',
-        maxWidth: '600px',
-        margin: 'auto',
-        textAlign: 'left',
-        marginTop: '20px',
-        padding: '0 10px'
-    }}
->
-    <h1>Your Registered Courses:</h1>
-
-    {courses.length > 0 ? (
-        <table style={{ width: '100%' }}>
-            <thead>
-            <tr>
-                <th>Course Name</th>
-                <th>Course Code</th>
-                <th>Day of Week</th>
-                <th>Time</th>
-            </tr>
-            </thead>
-            <tbody>
-            {courses.map(course => (
-                <tr key={course.id}>
-                    <td>
-                        <Link href={`/course/${course.id}`}>
-                            {course.name}
-                        </Link>
-                    </td>
-                    <td>{course.courseCode}</td>
-                    <td>{course.dayOfWeek}</td>
-                    <td>{course.time}</td>
-                </tr>
-            ))}
-            </tbody>
-        </table>
-    ) : (
-        <p>No courses registered</p>
-    )}
-</div>
+        <div className="cards-container">
+            <div className="row">
+                {requests.length > 0 ? (
+                    requests.map((request, index) => ( // Added parentheses around (request, index)
+                        <div className="col-md-4 col-xl-3" key={request.id}>
+                            <div className={`card ${colorClasses[index % colorClasses.length]} texts-card`}>
+                                <div className="card-block">
+                                    <h6 className="m-b-20">{request.name}</h6>
+                                    <h2 className="text-right">
+                                        <i className="fa fa-book f-left"></i>
+                                        <span>{request.courseCode}</span>
+                                    </h2>
+                                    <p className="m-b-0">Day: <span className="f-right">{request.dayOfWeek}</span></p>
+                                    <p className="m-b-0">Time: <span className="f-right">{request.time}</span></p>
+                                    <Link href={`/registerCourses/${request.id}`} className="btn btn-primary mt-3">Course Page</Link>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p>You have registered for all of the courses</p>
+                )}
+            </div>
+        </div>
     );
-}
 
-export default CourseList;
+};
+
+export default RegistrationRequests;
+
+
