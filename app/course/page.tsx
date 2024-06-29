@@ -12,8 +12,6 @@ interface Course {
     courseCode: string;
     dayOfWeek: string;
     time: string;
-    studentName: string;
-    studentEmail: string;
 }
 
 const RegistrationRequests = () => {
@@ -42,9 +40,7 @@ const RegistrationRequests = () => {
                         name: data.name,
                         courseCode: data.courseCode,
                         dayOfWeek: data.dayOfWeek,
-                        time: data.time,
-                        studentName: data.studentName,
-                        studentEmail: data.studentEmail,
+                        time: data.time
                     };
                 });
 
@@ -92,7 +88,7 @@ const RegistrationRequests = () => {
                         </div>
                     ))
                 ) : (
-                    <p>You have registered for all of the courses</p>
+                    <p>No Courses Registered</p>
                 )}
             </div>
         </div>
