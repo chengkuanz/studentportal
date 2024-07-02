@@ -43,9 +43,6 @@ const NavbarComp = () => {
                         <Link href="/quiz" passHref legacyBehavior>
                             <Nav.Link>Quiz</Nav.Link>
                         </Link>
-                        <Link href="/course" passHref legacyBehavior>
-                            <Nav.Link>Course</Nav.Link>
-                        </Link>
                         <Link href="/registerCourses" passHref legacyBehavior>
                             <Nav.Link>Register</Nav.Link>
                         </Link>
@@ -56,9 +53,6 @@ const NavbarComp = () => {
                             <NavDropdown.Item href="/courses/courseList">
                                 Course List
                             </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="/courses/addCourse">Add Course</NavDropdown.Item>
-                            <NavDropdown.Divider />
                         </NavDropdown>
                     </Nav>
                     <Nav>
