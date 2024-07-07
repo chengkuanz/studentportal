@@ -1,10 +1,10 @@
 'use client'; // This is a client component
 import React, { useEffect, useState, useRef } from 'react';
-import './quiz.css';
 import { collection, getDocs, doc, getDoc, DocumentData } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './quiz.css';
 
 interface Quiz {
     id: string;
@@ -23,13 +23,16 @@ interface Course {
     id: string;
     name: string;
     courseCode: string;
+    dayOfWeek: string;
+    time: string;
 }
 
 const QuizComponent = () => {
     const { user } = useAuth();
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-    const [courses, setCourses] = useState<{ [key: string]: Course }>({});
-    const [quizIndex, setQuizIndex] = useState(0);
+    const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
     const [questionIndex, setQuestionIndex] = useState(0);
     const [lock, setLock] = useState(false);
     const [score, setScore] = useState(0);
@@ -42,59 +45,79 @@ const QuizComponent = () => {
     const OptionArray = [Option1, Option2, Option3, Option4];
 
     useEffect(() => {
-        const fetchQuizzes = async () => {
+        const fetchCourses = async () => {
             if (!user) return;
 
-            const quizzesCollection = collection(db, 'quizzes');
-            const quizSnapshots = await getDocs(quizzesCollection);
-            const quizList = quizSnapshots.docs.map((doc) => {
-                const data = doc.data() as DocumentData;
-                return {
-                    id: doc.id,
-                    contentId: data.contentId,
-                    questions: data.questions,
-                    courseId: '', // Placeholder for courseId
-                };
-            });
+            const userDoc = doc(db, 'users', user.uid);
+            const userSnapshot = await getDoc(userDoc);
+            if (!userSnapshot.exists()) return;
 
-            // Fetch course details for each quiz based on contentId
-            const contentPromises = quizList.map((quiz) => getDoc(doc(db, 'courseContent', quiz.contentId)));
-            const contentSnapshots = await Promise.all(contentPromises);
-            const courseIds = contentSnapshots.map((contentSnapshot) => {
-                const data = contentSnapshot.data() as DocumentData;
-                return data.courseDocId;
-            });
+            const userData = userSnapshot.data();
+            const registeredCourses = userData?.registeredCourses || [];
 
-            const uniqueCourseIds = Array.from(new Set(courseIds)); // Remove duplicates
+            if (registeredCourses.length === 0) {
+                setCourses([]);
+                return;
+            }
 
-            const coursePromises = uniqueCourseIds.map((courseId) => getDoc(doc(db, 'courses', courseId)));
+            const coursesCollection = collection(db, 'courses');
+            const coursePromises = registeredCourses.map((courseId: string) => getDoc(doc(coursesCollection, courseId)));
             const courseSnapshots = await Promise.all(coursePromises);
-            const courseDetails: { [key: string]: Course } = {};
-            courseSnapshots.forEach((courseSnapshot) => {
+
+            const courseList = courseSnapshots.map((courseSnapshot) => {
                 const data = courseSnapshot.data() as DocumentData;
-                courseDetails[courseSnapshot.id] = {
+                return {
                     id: courseSnapshot.id,
                     name: data.name,
                     courseCode: data.courseCode,
+                    dayOfWeek: data.dayOfWeek,
+                    time: data.time,
                 };
             });
-            setCourses(courseDetails);
-
-            // Add courseId to each quiz
-            const updatedQuizzes = quizList.map((quiz, index) => ({
-                ...quiz,
-                courseId: courseIds[index],
-            }));
-            setQuizzes(updatedQuizzes);
+            setCourses(courseList);
         };
 
-        fetchQuizzes();
+        fetchCourses();
     }, [user]);
 
+    const fetchQuizzes = async (courseId: string) => {
+        const quizzesCollection = collection(db, 'quizzes');
+        const quizSnapshots = await getDocs(quizzesCollection);
+        const quizList = quizSnapshots.docs.map((doc) => {
+            const data = doc.data() as DocumentData;
+            return {
+                id: doc.id,
+                contentId: data.contentId,
+                questions: data.questions,
+                courseId: '', // Placeholder for courseId
+            };
+        });
+
+        const contentPromises = quizList.map((quiz) => getDoc(doc(db, 'courseContent', quiz.contentId)));
+        const contentSnapshots = await Promise.all(contentPromises);
+
+        const filteredQuizzes = quizList.filter((quiz, index) => {
+            const contentSnapshot = contentSnapshots[index];
+            if (contentSnapshot.exists()) {
+                const data = contentSnapshot.data() as DocumentData;
+                return data.courseDocId === courseId;
+            }
+            return false;
+        }).map((quiz, index) => {
+            const contentSnapshot = contentSnapshots[index];
+            const data = contentSnapshot.data() as DocumentData;
+            return {
+                ...quiz,
+                courseId: data.courseDocId,
+            };
+        });
+
+        setQuizzes(filteredQuizzes);
+    };
+
     const checkAns = (e: React.MouseEvent<HTMLLIElement>, ans: number) => {
-        if (lock === false && quizzes.length > 0) {
-            const currentQuiz = quizzes[quizIndex];
-            const currentQuestion = currentQuiz.questions[questionIndex];
+        if (lock === false && selectedQuiz) {
+            const currentQuestion = selectedQuiz.questions[questionIndex];
 
             if (currentQuestion && currentQuestion.correctAnswer === ans) {
                 e.currentTarget.classList.add("correct");
@@ -111,16 +134,9 @@ const QuizComponent = () => {
     };
 
     const next = () => {
-        if (lock === true) {
-            const currentQuiz = quizzes[quizIndex];
-            if (questionIndex === currentQuiz.questions.length - 1) {
-                if (quizIndex === quizzes.length - 1) {
-                    setResult(true);
-                } else {
-                    setQuizIndex((prevIndex) => prevIndex + 1);
-                    setQuestionIndex(0);
-                    resetOptions();
-                }
+        if (lock === true && selectedQuiz) {
+            if (questionIndex === selectedQuiz.questions.length - 1) {
+                setResult(true);
             } else {
                 setQuestionIndex((prevIndex) => prevIndex + 1);
                 resetOptions();
@@ -139,7 +155,7 @@ const QuizComponent = () => {
     };
 
     const reset = () => {
-        setQuizIndex(0);
+        setSelectedQuiz(null);
         setQuestionIndex(0);
         setScore(0);
         setLock(false);
@@ -147,44 +163,74 @@ const QuizComponent = () => {
     };
 
     if (!user) {
-        return <div className="text-center mt-5">Loading...</div>;
+        return <div>Loading...</div>;
     }
 
-    const currentQuiz = quizzes.length > 0 ? quizzes[quizIndex] : null;
-    const currentQuestion = currentQuiz ? currentQuiz.questions[questionIndex] : null;
-    const course = currentQuiz ? courses[currentQuiz.courseId] : null;
+    const currentQuestion = selectedQuiz ? selectedQuiz.questions[questionIndex] : null;
 
     return (
-        <div className='quizcontainer'>
-            {currentQuiz && course && (
+        <div className='container mt-5'>
+            {!selectedCourse ? (
                 <>
-                    <h1>{course.name} ({course.courseCode})</h1>
+                    <h1 className='mb-4'>Your Registered Courses</h1>
+                    <div className='list-group'>
+                        {courses.map((course) => (
+                            <button
+                                key={course.id}
+                                className='list-group-item list-group-item-action'
+                                onClick={() => { setSelectedCourse(course); fetchQuizzes(course.id); }}
+                            >
+                                {course.name} ({course.courseCode})
+                            </button>
+                        ))}
+                    </div>
+                </>
+            ) : !selectedQuiz ? (
+                <>
+                    <h1 className='mb-4'>Select a Quiz for {selectedCourse.name} ({selectedCourse.courseCode})</h1>
+                    <div className='list-group'>
+                        {quizzes.map((quiz) => (
+                            <button
+                                key={quiz.id}
+                                className='list-group-item list-group-item-action'
+                                onClick={() => setSelectedQuiz(quiz)}
+                            >
+                                Quiz {quiz.id}
+                            </button>
+                        ))}
+                    </div>
+                    <button className='btn btn-secondary mt-3' onClick={() => setSelectedCourse(null)}>Back to Courses</button>
+                </>
+            ) : (
+                <>
+                    <h1 className='mb-4'>{selectedCourse.name} ({selectedCourse.courseCode})</h1>
                     <hr />
-                    {!result ? (
-                        <>
-                            {currentQuestion && (
-                                <>
-                                    <h2>{questionIndex + 1}. {currentQuestion.question}</h2>
-                                    <ul>
-                                        <li ref={Option1} onClick={(e) => checkAns(e, 0)}>{currentQuestion.answers[0]}</li>
-                                        <li ref={Option2} onClick={(e) => checkAns(e, 1)}>{currentQuestion.answers[1]}</li>
-                                        <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
-                                        <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
-                                    </ul>
-                                    <button onClick={next}>Next</button>
-                                    <div className="index">{questionIndex + 1} of {currentQuiz.questions.length} questions</div>
-                                </>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            <h2>You Scored {score} out of {currentQuiz.questions.length}</h2>
-                            <button onClick={reset}>Reset</button>
-                        </>
-                    )}
+                    <div className='quizcontainer'>
+                        {!result ? (
+                            <>
+                                {currentQuestion && (
+                                    <>
+                                        <h2>{questionIndex + 1}. {currentQuestion.question}</h2>
+                                        <ul>
+                                            <li ref={Option1} onClick={(e) => checkAns(e, 0)}>{currentQuestion.answers[0]}</li>
+                                            <li ref={Option2} onClick={(e) => checkAns(e, 1)}>{currentQuestion.answers[1]}</li>
+                                            <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
+                                            <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
+                                        </ul>
+                                        <button onClick={next}>Next</button>
+                                        <div className="index">Question {questionIndex + 1} of {selectedQuiz.questions.length}</div>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <h2>You Scored {score} out of {selectedQuiz.questions.length}</h2>
+                                <button onClick={reset}>Reset</button>
+                            </>
+                        )}
+                    </div>
                 </>
             )}
-            {!currentQuiz && <p>No quizzes available</p>}
         </div>
     );
 };
