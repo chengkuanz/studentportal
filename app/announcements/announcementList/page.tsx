@@ -1,21 +1,22 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, getDoc, DocumentData } from 'firebase/firestore';
+import { collection, getDocs, DocumentData, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
-import './announcement.css';
+import './styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-interface Course {
+interface Announcement {
     id: string;
     text: string;
     title: string;
     expiryDate: string;
     releaseDate: string;
+    activeCourses: string[];
 }
 
-function includesOne(collection: any, search: any) {
+const includesOne = (collection: string[], search: string[]) => {
     for (let x of search) {
         if (collection.includes(x)) {
             return true;
@@ -26,10 +27,11 @@ function includesOne(collection: any, search: any) {
 
 const Dashboard = () => {
     const { user } = useAuth();
-    const [courses, setCourses] = useState<Course[]>([]);
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
 
     useEffect(() => {
-        const fetchCourses = async () => {
+        const fetchAnnouncements = async () => {
             if (!user) return;
 
             const userDoc = doc(db, 'users', user.uid);
@@ -40,18 +42,18 @@ const Dashboard = () => {
             const registeredCourses = userData?.registeredCourses || [];
 
             if (registeredCourses.length === 0) {
-                setCourses([]);
+                setAnnouncements([]);
                 return;
             }
 
             const announcementsCollection = collection(db, 'announcements');
             const announcementsSnapshot = await getDocs(announcementsCollection);
-            const courseList = announcementsSnapshot.docs
+            const announcementList = announcementsSnapshot.docs
                 .filter(x => includesOne(registeredCourses, x.data().activeCourses))
-                .map((courseSnapshot) => {
-                    const data = courseSnapshot.data() as DocumentData;
+                .map((announcementSnapshot) => {
+                    const data = announcementSnapshot.data() as DocumentData;
                     return {
-                        id: courseSnapshot.id,
+                        id: announcementSnapshot.id,
                         text: data.text,
                         title: data.title,
                         expiryDate: data.expiryDate,
@@ -59,39 +61,59 @@ const Dashboard = () => {
                         activeCourses: data.activeCourses,
                     };
                 });
-            setCourses(courseList);
+            setAnnouncements(announcementList);
         };
 
-        fetchCourses();
+        fetchAnnouncements().catch(console.error);
     }, [user]);
 
     if (!user) {
         return <div>Loading...</div>;
     }
 
+    const handleAnnouncementClick = (announcement: Announcement) => {
+        setSelectedAnnouncement(announcement);
+    };
+
     return (
         <div className="container">
             <h1>Your Announcements</h1>
-            {courses.length > 0 ? (
-                courses.map(course => (
-                    <div key={course.id} className="card">
-                        <h2>
-                            <Link href={`app/announcements/announcementList/${course.id}`} className="link">
-                                {course.title}
-                            </Link>
-                        </h2>
-                        <p>{course.text}</p>
-                        <div className="dates">
-                            <p>Release Date: {new Date(course.releaseDate).toLocaleDateString()}</p>
-                            <p>Expiry Date: {new Date(course.expiryDate).toLocaleDateString()}</p>
+            {announcements.length > 0 ? (
+                <div className="announcement-list">
+                    {announcements.map(announcement => (
+                        <div key={announcement.id} className="card" onClick={() => handleAnnouncementClick(announcement)}>
+                            <h2 className="link">
+                                {announcement.title}
+                            </h2>
+                            <p>{announcement.text}</p>
+                            <div className="dates">
+                                <p>Release Date: {new Date(announcement.releaseDate).toLocaleDateString()}</p>
+                                <p>Expiry Date: {new Date(announcement.expiryDate).toLocaleDateString()}</p>
+                            </div>
                         </div>
-                    </div>
-                ))
+                    ))}
+                </div>
             ) : (
-                <p className="noCourses">No announcements available.</p>
+                <p className="noAnnouncements">No announcements available.</p>
+            )}
+            {selectedAnnouncement && (
+                <div className="announcement-detail">
+                    <h2>{selectedAnnouncement.title}</h2>
+                    <p>{selectedAnnouncement.text}</p>
+                    <div className="dates">
+                        <p>Release Date: {new Date(selectedAnnouncement.releaseDate).toLocaleDateString()}</p>
+                        <p>Expiry Date: {new Date(selectedAnnouncement.expiryDate).toLocaleDateString()}</p>
+                    </div>
+                    <h3>Active Courses</h3>
+                    <ul>
+                        {selectedAnnouncement.activeCourses.map(courseId => (
+                            <li key={courseId}>{courseId}</li>
+                        ))}
+                    </ul>
+                </div>
             )}
         </div>
     );
-}
+};
 
 export default Dashboard;

@@ -1,0 +1,108 @@
+/* Container styling */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fdfdfd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styling */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Announcement list styling */
+.announcement-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Individual card styling */
+.card {
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.link {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.dates {
+    display: flex;
+    justify-content: space-between;
+    color: #777;
+}
+
+.dates p {
+    margin: 0;
+}
+
+/* Selected announcement detail styling */
+.announcement-detail {
+    margin-top: 40px;
+    padding: 30px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fafafa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.announcement-detail h2 {
+    margin-top: 0;
+    color: #555;
+}
+
+.announcement-detail p {
+    color: #444;
+}
+
+.announcement-detail .dates {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.announcement-detail h3 {
+    margin-top: 20px;
+    color: #333;
+}
+
+.announcement-detail ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.announcement-detail ul li {
+    background: #007bff;
+    color: white;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* No announcements message styling */
+.noAnnouncements {
+    text-align: center;
+    color: #666;
+}
