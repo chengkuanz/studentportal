@@ -58,5 +58,13 @@
   "reset": "Reset",
   "next": "Next",
   "question": "Question",
-  "of": "of"
+  "of": "of",
+
+  "password": "Password",
+
+  "courses-available": "Courses available this semester:",
+  "c-name": "Course Name",
+  "c-code": "Course Code",
+  "day-of-week": "Day of Week",
+  "no-course-available": "No courses available"
 }

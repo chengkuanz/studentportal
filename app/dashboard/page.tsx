@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, DocumentData } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import "../i18n.js"
 
 interface Course {
     id: string;
@@ -13,6 +15,11 @@ interface Course {
 }
 
 const Dashboard = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
     const { user } = useAuth();
     const [courses, setCourses] = useState<Course[]>([]);
 
@@ -52,16 +59,16 @@ const Dashboard = () => {
             }}
         >
 
-            <h1>Courses available this semester:</h1>
+            <h1>{t('courses-available')}:</h1>
 
             {courses.length > 0 ? (
                 <table style={{width: '100%'}}>
                     <thead>
                     <tr>
-                        <th>Course Name</th>
-                        <th>Course Code</th>
-                        <th>Day of Week</th>
-                        <th>Time</th>
+                        <th>{t('c-name')}</th>
+                        <th>{t('c-code')}</th>
+                        <th>{t('day-of-week')}</th>
+                        <th>{t('time')}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -78,7 +85,7 @@ const Dashboard = () => {
 
 
             ) : (
-                <p>No courses available</p>
+                <p>{t('no-course-available')}</p>
             )}
         </div>
 

@@ -18,7 +18,7 @@
   "mobile-app": "Utilisez notre application mobile",
   "footer": "Portail d'apprentissage de la langue italienne • 2024",
 
-  "email": "Email",
+  "email": "E-mail",
   "user-id": "Identifiant de l'utilisateur",
   "f-name": "Prénom",
   "l-name": "Nom de famille",
@@ -58,5 +58,13 @@
   "reset": "Réinitialiser",
   "next": "Suivant",
   "question": "Question",
-  "of": "de"
+  "of": "de",
+
+  "password": "Mot de passe",
+
+  "courses-available": "Cours disponibles ce semestre :",
+  "c-name": "Nom du cours",
+  "c-code": "Code du cours",
+  "day-of-week": "Jour de la semaine",
+  "no-course-available": "Aucun cours disponible"
 }

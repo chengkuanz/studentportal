@@ -2,8 +2,14 @@
 import React, { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 import { useAuth } from '../../context/AuthContext'
-
+import { useTranslation } from 'react-i18next';
+import "../i18n.js"
 const Signup = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
     const { user, signup } = useAuth()
     console.log(user)
     const [data, setData] = useState({
@@ -33,10 +39,10 @@ const Signup = () => {
                 margin: 'auto',
             }}
         >
-            <h1 className="text-center my-3 ">Signup</h1>
+            <h1 className="text-center my-3 ">{t('signup')}</h1>
             <Form onSubmit={handleSignup}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email address</Form.Label>
+                    <Form.Label>{t('email')}</Form.Label>
                     <Form.Control
                         type="email"
                         placeholder="Enter email"
@@ -52,7 +58,7 @@ const Signup = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label>{t('password')}</Form.Label>
                     <Form.Control
                         type="password"
                         placeholder="Password"
@@ -68,7 +74,7 @@ const Signup = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicFirstName">
-                    <Form.Label>First Name</Form.Label>
+                    <Form.Label>{t('f-name')}</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Enter first name"
@@ -84,7 +90,7 @@ const Signup = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicLastName">
-                    <Form.Label>Last Name</Form.Label>
+                    <Form.Label>{t('l-name')}</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Enter last name"
@@ -100,7 +106,7 @@ const Signup = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicStudentNumber">
-                    <Form.Label>Student Number</Form.Label>
+                    <Form.Label>{t('student-num')}</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Enter student number"
@@ -117,7 +123,7 @@ const Signup = () => {
 
 
                 <Button variant="primary" type="submit">
-                    Signup
+                    {t('signup')}
                 </Button>
             </Form>
         </div>
