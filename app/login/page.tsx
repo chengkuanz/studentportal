@@ -3,8 +3,15 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 import { useAuth } from '../../context/AuthContext'
+import { useTranslation } from 'react-i18next';
+import "../i18n.js"
 
 const Login = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
     const router = useRouter()
     const { user, login } = useAuth()
     const [data, setData] = useState({
@@ -31,10 +38,10 @@ const Login = () => {
                 margin: 'auto',
             }}
         >
-            <h1 className="text-center my-3 ">Login</h1>
+            <h1 className="text-center my-3 ">{t('login')}</h1>
             <Form onSubmit={handleLogin}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email address</Form.Label>
+                    <Form.Label>{t('email')}</Form.Label>
                     <Form.Control
                         onChange={(e: any) =>
                             setData({
@@ -50,7 +57,7 @@ const Login = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label>{t('password')}</Form.Label>
                     <Form.Control
                         onChange={(e: any) =>
                             setData({
@@ -65,7 +72,7 @@ const Login = () => {
                     />
                 </Form.Group>
                 <Button variant="primary" type="submit">
-                    Login
+                    {t('login')}
                 </Button>
             </Form>
         </div>

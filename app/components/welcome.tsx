@@ -2,8 +2,16 @@
 import React from 'react';
 import { Button, Carousel } from 'react-bootstrap';
 import Image from 'react-bootstrap/Image';
+import { useTranslation } from 'react-i18next';
+import "../i18n.js"
 
 const WelcomeCarousel: React.FC = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
+
     // Inline styles
     const carouselItemStyle: React.CSSProperties = {
         height: '800px',
@@ -31,13 +39,13 @@ const WelcomeCarousel: React.FC = () => {
                     <Carousel.Caption>
                         <h1 className="display-1"
                             style={{ fontFamily: "Times New Roman, Times, serif", fontSize: "100px" }}>
-                            Start Your Italian Journey
+                            {t('start-italian-journey')}
                         </h1>
                         <br /> <br />
-                        <Button variant="primary" size="lg" href="/signup">Sign Up</Button>{' '}
+                        <Button variant="primary" size="lg" href="/signup">{t('signup')}</Button>{' '}
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <Button variant="light" size="lg" href="/login">Log in</Button>
+                        <Button variant="light" size="lg" href="/login">{t('login')}</Button>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item style={carouselItemStyle}>
@@ -50,9 +58,8 @@ const WelcomeCarousel: React.FC = () => {
                     <Carousel.Caption>
                         <h1 className="display-1"
                             style={{ fontFamily: "Times New Roman, Times, serif", fontSize: "60px" }}>
-                            Watch interactive videos and immerse yourself in Italian Art &amp; Culture
+                            {t('carousel-caption-page2')}
                         </h1>
-                        <p>Guarda video interattivi e immergiti nell&apos;arte e nella cultura italiana</p>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item style={carouselItemStyle}>
@@ -65,11 +72,8 @@ const WelcomeCarousel: React.FC = () => {
                     <Carousel.Caption>
                         <h1 className="display-1"
                             style={{ fontFamily: "Times New Roman, Times, serif", fontSize: "60px" }}>
-                            Master Italian with our engaging learning tools
+                            {t('carousel-caption-page3')}
                         </h1>
-                        <p>
-                            Padroneggia l&apos;italiano con i nostri coinvolgenti strumenti di apprendimento
-                        </p>
                     </Carousel.Caption>
                 </Carousel.Item>
             </Carousel>

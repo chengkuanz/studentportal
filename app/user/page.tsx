@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
+import {useTranslation} from "react-i18next";
+import "../i18n.js"
 
 interface FormData {
     email?: string;
@@ -15,6 +17,12 @@ interface FormData {
 }
 
 const User = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
+
     const { user } = useAuth();
     const [userData, setUserData] = useState({ email: '', uid: '', firstName: '', lastName: '', studentNumber: '', program: '', department: '', title: '' });
     const [editMode, setEditMode] = useState(false);
@@ -74,24 +82,24 @@ const User = () => {
                 marginTop: '20px'
             }}
         >
-            <h1>User Information</h1>
-            <p>Email: {userData.email}</p>
-            <p>User ID: {userData.uid}</p>
-            <p>First Name: {userData.firstName}</p>
-            <p>Last Name: {userData.lastName}</p>
-            <p>Student Number: {userData.studentNumber}</p>
-            <p>Program: {userData.program}</p>
-            <p>Department: {userData.department}</p>
-            <p>Title: {userData.title}</p>
+            <h1>{t('profile')}</h1>
+            <p>{t('email')}: {userData.email}</p>
+            <p>{t('user-id')}: {userData.uid}</p>
+            <p>{t('f-name')}: {userData.firstName}</p>
+            <p>{t('l-name')}: {userData.lastName}</p>
+            <p>{t('student-num')}: {userData.studentNumber}</p>
+            <p>{t('program')}: {userData.program}</p>
+            <p>{t('department')}: {userData.department}</p>
+            <p>{t('user-title')}: {userData.title}</p>
 
             {/* Button to toggle edit mode */}
             {!editMode ? (
                 <button  className="btn btn-primary mt-3"
-                         onClick={() => setEditMode(true)}>Edit</button>
+                         onClick={() => setEditMode(true)}>{t('edit')}</button>
             ) : (
                 <form onSubmit={handleSubmit} className="mt-4">
                     <div className="mb-3 row">
-                        <label htmlFor="inputFirstName" className="col-sm-3 col-form-label">First Name</label>
+                        <label htmlFor="inputFirstName" className="col-sm-3 col-form-label">{t('f-name')}</label>
                         <div className="col-sm-9">
                             <input
                                 type="text"
@@ -106,7 +114,7 @@ const User = () => {
                         </div>
                     </div>
                     <div className="mb-3 row">
-                        <label htmlFor="inputLastName" className="col-sm-3 col-form-label">Last Name</label>
+                        <label htmlFor="inputLastName" className="col-sm-3 col-form-label">{t('l-name')}</label>
                         <div className="col-sm-9">
                             <input
                                 type="text"
@@ -121,7 +129,7 @@ const User = () => {
                         </div>
                     </div>
                     <div className="mb-3 row">
-                        <label htmlFor="inputStudentNumber" className="col-sm-3 col-form-label">Student Number</label>
+                        <label htmlFor="inputStudentNumber" className="col-sm-3 col-form-label">{t('student-num')}</label>
                         <div className="col-sm-9">
                             <input
                                 type="text"
@@ -136,7 +144,7 @@ const User = () => {
                         </div>
                     </div>
                     <div className="mb-3 row">
-                        <label htmlFor="inputProgram" className="col-sm-3 col-form-label">Program</label>
+                        <label htmlFor="inputProgram" className="col-sm-3 col-form-label">{t('program')}</label>
                         <div className="col-sm-9">
                             <input
                                 type="text"
@@ -150,7 +158,7 @@ const User = () => {
                         </div>
                     </div>
                     <div className="mb-3 row">
-                        <label htmlFor="inputDepartment" className="col-sm-3 col-form-label">Department</label>
+                        <label htmlFor="inputDepartment" className="col-sm-3 col-form-label">{t('department')}</label>
                         <div className="col-sm-9">
                             <input
                                 type="text"
@@ -164,7 +172,7 @@ const User = () => {
                         </div>
                     </div>
                     <div className="mb-3 row">
-                        <label htmlFor="inputTitle" className="col-sm-3 col-form-label">Title</label>
+                        <label htmlFor="inputTitle" className="col-sm-3 col-form-label">{t('user-title')}</label>
                         <div className="col-sm-9">
                             <input
                                 type="text"
@@ -177,7 +185,7 @@ const User = () => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-primary">Save</button>
+                    <button type="submit" className="btn btn-primary">{t('save')}</button>
                 </form>
 
 

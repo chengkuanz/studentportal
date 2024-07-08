@@ -1,7 +1,14 @@
 'use client';
 import React from 'react';
+import {useTranslation} from "react-i18next";
+import "../i18n.js"
 
 const Features = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
     return (
         <main style={{ margin: '100px 0' }}>
             <div className="container marketing">
@@ -15,8 +22,7 @@ const Features = () => {
                             className="bd-placeholder-img"
                         />
                         <br />
-                        <h2>Interactive Quizzes</h2>
-                        <p>Some representative placeholder content for the three columns of text below the carousel. This is the first column.</p>
+                        <h2>{t('interactive-quizzes')}</h2>
                     </div>
 
                     <div className="col-lg-4">
@@ -28,8 +34,7 @@ const Features = () => {
                             className="bd-placeholder-img"
                         />
                         <br />
-                        <h2>Diverse videos</h2>
-                        <p>Another exciting bit of representative placeholder content. This time, we&apos;ve moved on to the second column.</p>
+                        <h2>{t('course-materials')}</h2>
                     </div>
 
                     <div className="col-lg-4">
@@ -41,8 +46,7 @@ const Features = () => {
                             className="bd-placeholder-img"
                         />
                         <br />
-                        <h2>Course materials</h2>
-                        <p>And lastly this, the third column of representative placeholder content.</p>
+                        <h2>{t('mobile-app')}</h2>
                     </div>
                 </div>
             </div>
