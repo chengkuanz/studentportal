@@ -33,5 +33,30 @@
   "release-date": "Release Date",
   "expiry-date": "Expiry Date",
   "no-announ-avail": "No announcements available.",
-  "active-courses": "Active Courses"
+  "active-courses": "Active Courses",
+
+  "course-id": "Course ID",
+  "no-course-found": "No course found",
+  "course contents": "Course Contents",
+  "chapter": "Chapter",
+  "type": "Type",
+  "open": "Open",
+  "close": "Close",
+  "due": "Due",
+  "not-support-video": "Your browser does not support the video tag.",
+  "download": "Download Video",
+
+  "your-registered-courses": "Your Registered Courses",
+  "waiting-for-register": "Waiting For Register",
+  "day": "Day",
+  "time": "Time",
+
+  "select-quiz": "Select a Quiz",
+  "back-to-courses": "Back to Courses",
+  "you-score": "You Scored",
+  "out-of": "out of",
+  "reset": "Reset",
+  "next": "Next",
+  "question": "Question",
+  "of": "of"
 }

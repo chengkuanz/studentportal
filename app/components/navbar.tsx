@@ -6,7 +6,6 @@ import { useAuth } from '../../context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next';
 import "../i18n.js"
-import CourseList from "@/app/courses/courseList/page";
 //legacyBehavior is used to linking a Bootstrap Navbar correctly with nextjs after next v13.x.x
 
 const NavbarComp = () => {

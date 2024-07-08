@@ -33,5 +33,30 @@
   "release-date": "Date de publication",
   "expiry-date": "Date d'expiration",
   "no-announ-avail": "Aucune annonce disponible.",
-  "active-courses": "Cours actifs"
+  "active-courses": "Cours actifs",
+
+  "course-id": "ID du cours",
+  "no-course-found": "Aucun cours trouvé",
+  "course contents": "Contenu du cours",
+  "chapter": "Chapitre",
+  "type": "Type",
+  "open": "Ouverture",
+  "close": "Fermeture",
+  "due": "Échéance",
+  "not-support-video": "Votre navigateur ne prend pas en charge la balise vidéo.",
+  "download": "Télécharger la vidéo",
+
+  "your-registered-courses": "Vos cours enregistrés :",
+  "waiting-for-register": "En attente d'inscription :",
+  "day": "Jour",
+  "time": "Heure",
+
+  "select-quiz": "Sélectionnez un quiz",
+  "back-to-courses": "Retour aux cours",
+  "you-score": "Vous avez marqué",
+  "out-of": "sur",
+  "reset": "Réinitialiser",
+  "next": "Suivant",
+  "question": "Question",
+  "of": "de"
 }

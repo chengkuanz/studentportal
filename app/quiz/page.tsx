@@ -5,6 +5,8 @@ import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './quiz.css';
+import { useTranslation } from 'react-i18next';
+import "../i18n.js"
 
 interface Quiz {
     id: string;
@@ -28,6 +30,12 @@ interface Course {
 }
 
 const QuizComponent = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
+
     const { user } = useAuth();
     const [courses, setCourses] = useState<Course[]>([]);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -172,7 +180,7 @@ const QuizComponent = () => {
         <div className='container mt-5'>
             {!selectedCourse ? (
                 <>
-                    <h1 className='mb-4'>Your Registered Courses</h1>
+                    <h1 className='mb-4'>{t('your-registered-courses')}</h1>
                     <div className='list-group'>
                         {courses.map((course) => (
                             <button
@@ -187,7 +195,7 @@ const QuizComponent = () => {
                 </>
             ) : !selectedQuiz ? (
                 <>
-                    <h1 className='mb-4'>Select a Quiz for {selectedCourse.name} ({selectedCourse.courseCode})</h1>
+                    <h1 className='mb-4'>{t('select-quiz')} {selectedCourse.name} ({selectedCourse.courseCode})</h1>
                     <div className='list-group'>
                         {quizzes.map((quiz) => (
                             <button
@@ -195,11 +203,11 @@ const QuizComponent = () => {
                                 className='list-group-item list-group-item-action'
                                 onClick={() => setSelectedQuiz(quiz)}
                             >
-                                Quiz {quiz.id}
+                                {t('quiz')} {quiz.id}
                             </button>
                         ))}
                     </div>
-                    <button className='btn btn-secondary mt-3' onClick={() => setSelectedCourse(null)}>Back to Courses</button>
+                    <button className='btn btn-secondary mt-3' onClick={() => setSelectedCourse(null)}>{t('back-to-courses')}</button>
                 </>
             ) : (
                 <>
@@ -217,15 +225,15 @@ const QuizComponent = () => {
                                             <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
                                             <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
                                         </ul>
-                                        <button onClick={next}>Next</button>
-                                        <div className="index">Question {questionIndex + 1} of {selectedQuiz.questions.length}</div>
+                                        <button onClick={next}>{t('next')}</button>
+                                        <div className="index">{t('question')} {questionIndex + 1} {t('of')} {selectedQuiz.questions.length}</div>
                                     </>
                                 )}
                             </>
                         ) : (
                             <>
-                                <h2>You Scored {score} out of {selectedQuiz.questions.length}</h2>
-                                <button onClick={reset}>Reset</button>
+                                <h2>{t('you-score')} {score} {t('out-of')} {selectedQuiz.questions.length}</h2>
+                                <button onClick={reset}>{t('reset')}</button>
                             </>
                         )}
                     </div>
