@@ -8,7 +8,7 @@
   "announcements": "Announcements",
   "course-list": "Course List",
   "my-courses": "My Courses",
-  "user-info": "User Info",
+  "profile": "Profile",
   "change-language": "Change Language",
   "start-italian-journey": "Start Your Italian Journey",
   "carousel-caption-page2": "Watch interactive videos and immerse yourself in Italian Art & Culture",
@@ -16,5 +16,22 @@
   "interactive-quizzes": "Interactive Quizzes",
   "course-materials": "Diverse course materials and videos",
   "mobile-app": "Use our mobile App",
-  "footer": "Italian Language Learning Student Portal • 2024"
+  "footer": "Italian Language Learning Student Portal • 2024",
+
+  "email": "Email",
+  "user-id": "User ID",
+  "f-name": "First Name",
+  "l-name": "Last Name",
+  "student-num": "Student Number",
+  "program": "Program",
+  "department": "Department",
+  "user-title": "Title",
+  "edit": "Edit",
+  "save": "Save",
+
+  "your-announcements": "Your Announcements",
+  "release-date": "Release Date",
+  "expiry-date": "Expiry Date",
+  "no-announ-avail": "No announcements available.",
+  "active-courses": "Active Courses"
 }

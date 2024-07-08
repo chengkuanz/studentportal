@@ -64,7 +64,7 @@ const NavbarComp = () => {
                         </NavDropdown>
                     </Nav>
                     <Nav>
-                        <Nav.Link href="/user">{t('user-info')}</Nav.Link>
+                        <Nav.Link href="/user">{t('profile')}</Nav.Link>
                         <NavDropdown title={t('change-language')} id="basic-nav-dropdown">
                             <NavDropdown.Item>
                                 <Button variant="light" onClick={() => changeLanguage('en')}>
