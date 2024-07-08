@@ -57,7 +57,7 @@ const NavbarComp = () => {
                         <Link href="/announcements/announcementList" passHref legacyBehavior>
                             <Nav.Link>{t('announcements')}</Nav.Link>
                         </Link>
-                        <NavDropdown title="My Courses" id="basic-nav-dropdown">
+                        <NavDropdown title={t('my-courses')} id="basic-nav-dropdown">
                             <NavDropdown.Item href="/courses/courseList">
                                 {t('course-list')}
                             </NavDropdown.Item>

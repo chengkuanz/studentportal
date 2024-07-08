@@ -1,13 +1,20 @@
 {
   "lang-learning-student-portal": "Language Learning Student Portal",
   "logout": "Logout",
-  "signup": "SignUp",
-  "login": "Login",
+  "signup": "Sign Up",
+  "login": "Log in",
   "quiz": "Quiz",
   "register": "Register",
   "announcements": "Announcements",
   "course-list": "Course List",
   "my-courses": "My Courses",
   "user-info": "User Info",
-  "change-language": "Change Language"
+  "change-language": "Change Language",
+  "start-italian-journey": "Start Your Italian Journey",
+  "carousel-caption-page2": "Watch interactive videos and immerse yourself in Italian Art & Culture",
+  "carousel-caption-page3": "Master Italian with our engaging learning tools",
+  "interactive-quizzes": "Interactive Quizzes",
+  "course-materials": "Diverse course materials and videos",
+  "mobile-app": "Use our mobile App",
+  "footer": "Italian Language Learning Student Portal • 2024"
 }
