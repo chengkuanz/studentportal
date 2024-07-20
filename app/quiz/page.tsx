@@ -1,10 +1,12 @@
 'use client'; // This is a client component
 import React, { useEffect, useState, useRef } from 'react';
-import { collection, getDocs, doc, getDoc, DocumentData, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, DocumentData } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './quiz.css';
+import { useTranslation } from 'react-i18next';
+import "../i18n.js"
 
 interface Quiz {
     id: string;
@@ -28,6 +30,12 @@ interface Course {
 }
 
 const QuizComponent = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
+
     const { user } = useAuth();
     const [courses, setCourses] = useState<Course[]>([]);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -37,7 +45,6 @@ const QuizComponent = () => {
     const [lock, setLock] = useState(false);
     const [score, setScore] = useState(0);
     const [result, setResult] = useState(false);
-    const [lastScore, setLastScore] = useState<number | null>(null);
 
     const Option1 = useRef<HTMLLIElement>(null);
     const Option2 = useRef<HTMLLIElement>(null);
@@ -138,7 +145,6 @@ const QuizComponent = () => {
         if (lock === true && selectedQuiz) {
             if (questionIndex === selectedQuiz.questions.length - 1) {
                 setResult(true);
-                saveScore();
             } else {
                 setQuestionIndex((prevIndex) => prevIndex + 1);
                 resetOptions();
@@ -164,32 +170,6 @@ const QuizComponent = () => {
         setResult(false);
     };
 
-    const saveScore = async () => {
-        if (user && selectedCourse && selectedQuiz) {
-            const userDocRef = doc(db, 'users', user.uid);
-            const userSnapshot = await getDoc(userDocRef);
-            const userData = userSnapshot.data();
-
-            const updatedScores = userData?.scores || {};
-            updatedScores[selectedQuiz.id] = score;
-
-            await updateDoc(userDocRef, {
-                scores: updatedScores
-            });
-        }
-    };
-
-    const selectQuiz = async (quiz: Quiz) => {
-        setSelectedQuiz(quiz);
-        if (user) {
-            const userDocRef = doc(db, 'users', user.uid);
-            const userSnapshot = await getDoc(userDocRef);
-            const userData = userSnapshot.data();
-            const lastScore = userData?.scores?.[quiz.id] || null;
-            setLastScore(lastScore);
-        }
-    };
-
     if (!user) {
         return <div>Loading...</div>;
     }
@@ -200,7 +180,7 @@ const QuizComponent = () => {
         <div className='container mt-5'>
             {!selectedCourse ? (
                 <>
-                    <h1 className='mb-4'>Your Registered Courses</h1>
+                    <h1 className='mb-4'>{t('your-registered-courses')}</h1>
                     <div className='list-group'>
                         {courses.map((course) => (
                             <button
@@ -215,22 +195,19 @@ const QuizComponent = () => {
                 </>
             ) : !selectedQuiz ? (
                 <>
-                    <h1 className='mb-4'>Select a Quiz for {selectedCourse.name} ({selectedCourse.courseCode})</h1>
+                    <h1 className='mb-4'>{t('select-quiz')} {selectedCourse.name} ({selectedCourse.courseCode})</h1>
                     <div className='list-group'>
                         {quizzes.map((quiz) => (
                             <button
                                 key={quiz.id}
-                                className='list-group-item list-group-item-action d-flex justify-content-between align-items-center'
-                                onClick={() => selectQuiz(quiz)}
+                                className='list-group-item list-group-item-action'
+                                onClick={() => setSelectedQuiz(quiz)}
                             >
-                                <span>Quiz {quiz.id}</span>
-                                {lastScore !== null && (
-                                    <span className='badge badge-primary badge-pill' style={{ color: 'black' }}>Last Score: {lastScore}</span>
-                                )}
+                                {t('quiz')} {quiz.id}
                             </button>
                         ))}
                     </div>
-                    <button className='btn btn-secondary mt-3' onClick={() => setSelectedCourse(null)}>Back to Courses</button>
+                    <button className='btn btn-secondary mt-3' onClick={() => setSelectedCourse(null)}>{t('back-to-courses')}</button>
                 </>
             ) : (
                 <>
@@ -248,23 +225,18 @@ const QuizComponent = () => {
                                             <li ref={Option3} onClick={(e) => checkAns(e, 2)}>{currentQuestion.answers[2]}</li>
                                             <li ref={Option4} onClick={(e) => checkAns(e, 3)}>{currentQuestion.answers[3]}</li>
                                         </ul>
-                                        <button onClick={next}>Next</button>
-                                        <div className="index">Question {questionIndex + 1} of {selectedQuiz.questions.length}</div>
+                                        <button onClick={next}>{t('next')}</button>
+                                        <div className="index">{t('question')} {questionIndex + 1} {t('of')} {selectedQuiz.questions.length}</div>
                                     </>
                                 )}
                             </>
                         ) : (
                             <>
-                                <h2>You Scored {score} out of {selectedQuiz.questions.length}</h2>
-                                <button onClick={reset}>Reset</button>
+                                <h2>{t('you-score')} {score} {t('out-of')} {selectedQuiz.questions.length}</h2>
+                                <button onClick={reset}>{t('reset')}</button>
                             </>
                         )}
                     </div>
-                    {lastScore !== null && (
-                        <div className='mt-4'>
-                            <h3>Last Score: {lastScore}</h3>
-                        </div>
-                    )}
                 </>
             )}
         </div>

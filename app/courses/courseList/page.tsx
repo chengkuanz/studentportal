@@ -5,6 +5,9 @@ import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import './styles.css'
+import { useTranslation } from 'react-i18next';
+import "../../i18n.js"
+
 interface Course {
     id: string;
     name: string;
@@ -14,6 +17,11 @@ interface Course {
 }
 
 const Dashboard = () => {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
     const { user } = useAuth();
     const [courses, setCourses] = useState<Course[]>([]);
     const [waitingCourses, setWaitingCourses] = useState<Course[]>([]);
@@ -78,11 +86,8 @@ const Dashboard = () => {
     }
     const colorClasses = ['bg-c-blue', 'bg-c-green', 'bg-c-yellow', 'bg-c-pink'];
     return (
-        <div
-
-        >
-            <h1>Your Registered Courses:</h1>
-
+        <div className="container" >
+            <h1>{t('your-registered-courses')}</h1>
 
             <div className="cards-container">
                 <div className="row">
@@ -99,10 +104,10 @@ const Dashboard = () => {
                                                 <i className="fa fa-book f-left"></i>
                                                 <span>{course.courseCode}</span>
                                             </h2>
-                                            <p className="m-b-0">Day: <span
+                                            <p className="m-b-0">{t('day')}: <span
                                                 className="f-right">{course.dayOfWeek}</span>
                                             </p>
-                                            <p className="m-b-0">Time: <span className="f-right">{course.time}</span>
+                                            <p className="m-b-0">{t('time')}: <span className="f-right">{course.time}</span>
                                             </p>
 
                                         </div>
@@ -120,8 +125,7 @@ const Dashboard = () => {
 
 
 
-
-            <h1>Waiting For Register:</h1>
+            <h1>{t('waiting-for-register')}</h1>
 
             <div className="cards-container">
                 <div className="row">
@@ -135,9 +139,9 @@ const Dashboard = () => {
                                             <i className="fa fa-book f-left"></i>
                                             <span>{course.courseCode}</span>
                                         </h2>
-                                        <p className="m-b-0">Day: <span className="f-right">{course.dayOfWeek}</span>
+                                        <p className="m-b-0">{t('day')}: <span className="f-right">{course.dayOfWeek}</span>
                                         </p>
-                                        <p className="m-b-0">Time: <span className="f-right">{course.time}</span></p>
+                                        <p className="m-b-0">{t('time')}: <span className="f-right">{course.time}</span></p>
 
                                     </div>
                                 </div>
