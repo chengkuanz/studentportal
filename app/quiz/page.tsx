@@ -1,6 +1,6 @@
 'use client'; // This is a client component
 import React, { useEffect, useState, useRef } from 'react';
-import { collection, getDocs, doc, getDoc, DocumentData } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, DocumentData, updateDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -37,6 +37,7 @@ const QuizComponent = () => {
     const [lock, setLock] = useState(false);
     const [score, setScore] = useState(0);
     const [result, setResult] = useState(false);
+    const [lastScore, setLastScore] = useState<number | null>(null);
 
     const Option1 = useRef<HTMLLIElement>(null);
     const Option2 = useRef<HTMLLIElement>(null);
@@ -137,6 +138,7 @@ const QuizComponent = () => {
         if (lock === true && selectedQuiz) {
             if (questionIndex === selectedQuiz.questions.length - 1) {
                 setResult(true);
+                saveScore();
             } else {
                 setQuestionIndex((prevIndex) => prevIndex + 1);
                 resetOptions();
@@ -160,6 +162,32 @@ const QuizComponent = () => {
         setScore(0);
         setLock(false);
         setResult(false);
+    };
+
+    const saveScore = async () => {
+        if (user && selectedCourse && selectedQuiz) {
+            const userDocRef = doc(db, 'users', user.uid);
+            const userSnapshot = await getDoc(userDocRef);
+            const userData = userSnapshot.data();
+
+            const updatedScores = userData?.scores || {};
+            updatedScores[selectedQuiz.id] = score;
+
+            await updateDoc(userDocRef, {
+                scores: updatedScores
+            });
+        }
+    };
+
+    const selectQuiz = async (quiz: Quiz) => {
+        setSelectedQuiz(quiz);
+        if (user) {
+            const userDocRef = doc(db, 'users', user.uid);
+            const userSnapshot = await getDoc(userDocRef);
+            const userData = userSnapshot.data();
+            const lastScore = userData?.scores?.[quiz.id] || null;
+            setLastScore(lastScore);
+        }
     };
 
     if (!user) {
@@ -192,10 +220,13 @@ const QuizComponent = () => {
                         {quizzes.map((quiz) => (
                             <button
                                 key={quiz.id}
-                                className='list-group-item list-group-item-action'
-                                onClick={() => setSelectedQuiz(quiz)}
+                                className='list-group-item list-group-item-action d-flex justify-content-between align-items-center'
+                                onClick={() => selectQuiz(quiz)}
                             >
-                                Quiz {quiz.id}
+                                <span>Quiz {quiz.id}</span>
+                                {lastScore !== null && (
+                                    <span className='badge badge-primary badge-pill' style={{ color: 'black' }}>Last Score: {lastScore}</span>
+                                )}
                             </button>
                         ))}
                     </div>
@@ -229,6 +260,11 @@ const QuizComponent = () => {
                             </>
                         )}
                     </div>
+                    {lastScore !== null && (
+                        <div className='mt-4'>
+                            <h3>Last Score: {lastScore}</h3>
+                        </div>
+                    )}
                 </>
             )}
         </div>
