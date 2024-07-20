@@ -190,6 +190,13 @@ const QuizComponent = () => {
         }
     };
 
+    useEffect(() => {
+        // Reset last score when the selected quiz changes
+        if (selectedQuiz) {
+            setLastScore(null); // Clear lastScore when a new quiz is selected
+        }
+    }, [selectedQuiz]);
+
     if (!user) {
         return <div>Loading...</div>;
     }
@@ -225,7 +232,7 @@ const QuizComponent = () => {
                             >
                                 <span>Quiz {quiz.id}</span>
                                 {lastScore !== null && (
-                                    <span className='badge badge-primary badge-pill' style={{ color: 'black' }}>Last Score: {lastScore}</span>
+                                    <span className='mt-4' style={{ color: 'black' }}>Last Score: {lastScore}</span>
                                 )}
                             </button>
                         ))}
